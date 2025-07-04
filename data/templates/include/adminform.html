@@ -1,0 +1,14 @@
+{{define "adminform"}}<DIV class="card" id="adminform">
+	<H2>Admin Login</H2>
+	<FORM action="/admin/login" method="post">
+		<TABLE>
+			<TR>
+				<TD><LABEL for="password">Password</LABEL></TD>
+				<TD><INPUT type="password" name="password" id="password"></TD>
+			</TR>
+			<TR>
+				<TD colspan="2"><INPUT type="submit" value="Submit" id="submit"></TD>
+			</TR>
+		</TABLE>
+	</FORM>
+</DIV>{{end}}

@@ -1,0 +1,37 @@
+{{define "postpreview"}}<DIV class="card post post-preview" id="post{{.ID}}">
+	<DIV class="details">
+		<DIV class="commands">
+			<A href="/admin/delete/{{.ID}}" class="admin">Delete</A>
+			<A href="/admin/ban/{{.ID}}" class="admin">Ban</A>
+			<A href="/thread/{{.ID}}">Reply</A>
+		</DIV>
+		<SPAN class="name" title="Name">{{.Name}}</SPAN>
+		<SPAN class="subject" title="Subject">{{.Subject}}</SPAN>
+		<SPAN class="time" title="{{.Posted}}">{{timeago .Posted}}</SPAN>
+	</DIV>
+	<DIV class="body">
+		{{if .Image}}<A href="/{{.FullPath}}" target="_blank"><IMG src="/{{.ThumbPath}}" alt=""></A>{{end}}
+		{{if ne .Body ""}}<SPAN>{{.Body}}</SPAN>{{end}}
+	</DIV>
+	{{if gt (len .Replies) 0}}<TABLE>
+		<TR>{{$replies := .Replies}}{{if gt (len .Replies) 2}}{{$replies = slice $replies (max 0 (sub (len $replies) 2))}}{{end}}
+			{{if gt (len .Replies) 2}}<TD><SPAN style="font-weight: bold;">...</SPAN></TD>{{end}}
+			{{range $replies}}<TD>
+				<DIV class="card post reply reply-preview" id="post{{.ID}}">
+					<DIV class="details">
+						<DIV class="commands">
+							<A href="/admin/delete/{{.ID}}" class="admin">Delete</A>
+							<A href="/admin/ban/{{.ID}}" class="admin">Ban</A>
+						</DIV>
+						<SPAN class="name" title="Name">{{.Name}}</SPAN>
+						<SPAN class="time" title="{{.Posted}}">{{timeago .Posted}}</SPAN>
+					</DIV>
+					<DIV class="body">
+						{{if .Image}}<A href="/{{.FullPath}}" target="_blank"><IMG src="/{{.ThumbPath}}" alt=""></A>{{end}}
+						{{if ne .Body ""}}<SPAN>{{.Body}}</SPAN>{{end}}
+					</DIV>
+				</DIV>
+			</TD>{{end}}
+		</TR>
+	</TABLE>{{end}}
+</DIV>{{end}}

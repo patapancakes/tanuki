@@ -1,0 +1,11 @@
+{{define "header"}}<DIV class="card header">
+	<DIV class="details">
+		<DIV class="commands">
+			{{if ne config.AdminPassword ""}}<A href="/admin/logout" class="admin">Log Out</A>
+			<A href="/admin">Manage</A>{{end}}
+			<A href="/">Home</A>
+		</DIV>
+	</DIV>
+	<H1>{{config.SiteName}}</H1>
+	{{if gt (len config.SiteSlogans) 0}}<SPAN class="slogan">{{index config.SiteSlogans (rand (len config.SiteSlogans))}}</SPAN>{{end}}
+</DIV>{{end}}

@@ -1,0 +1,5 @@
+{{define "pagesel"}}<DIV class="card pagesel">
+	{{range .Pages}}
+	{{$p := sum . 1}}{{if gt $p config.MaxPages}}{{break}}{{end}}<A href="/{{$p}}"{{if eq $p $.Page}} style="text-decoration: underline;"{{end}}>{{$p}}</A>
+	{{end}}
+</DIV>{{end}}
