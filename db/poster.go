@@ -1,6 +1,6 @@
 /*
 	tanuki - a lightweight image bbs
-	Copyright (C) 2024  Pancakes (pancakes@mooglepowered.com)
+	Copyright (C) 2025  Pancakes (pancakes@mooglepowered.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as published by
