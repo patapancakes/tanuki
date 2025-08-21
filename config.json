@@ -4,7 +4,7 @@
 	"siteName": "Tanuki BBS",
 	"siteSlogans": [],
 
-	"adminPassword": "changeme",
+	"adminPassword": "",
 
 	"postCooldown": 30,
 	"adminCooldown": 5,
