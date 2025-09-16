@@ -55,7 +55,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if poster.LastPost.Add(time.Second * time.Duration(Config.PostCooldown)).After(time.Now().UTC()) {
-		writeError(w, r, "you are being rate limited", http.StatusTooManyRequests)
+		writeError(w, r, "you are posting too quickly", http.StatusTooManyRequests)
 		return
 	}
 

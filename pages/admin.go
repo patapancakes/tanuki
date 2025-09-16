@@ -61,7 +61,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now().UTC()) {
-		writeError(w, r, "you are being rate limited", http.StatusTooManyRequests)
+		writeError(w, r, "you are logging in too quickly", http.StatusTooManyRequests)
 		return
 	}
 
