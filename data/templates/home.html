@@ -12,6 +12,7 @@
 		{{template "postform" 0}}
 		{{range .Posts}}{{template "postpreview" .}}{{end}}
 		<DIV class="footer">
+			{{template "credits"}}
 			{{if gt .Pages 1}}{{template "pagesel" .}}{{end}}
 		</DIV>
 	</BODY>

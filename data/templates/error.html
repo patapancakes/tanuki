@@ -6,7 +6,7 @@
 		<!--<META http-equiv="Refresh" content="5; url=/">-->
 		<LINK rel="icon" type="image/x-icon" href="/data/static/leaf2.ico">
 		<LINK rel="stylesheet" href="/data/static/style.css" type="text/css">
-		<STYLE>HTML { background-image: url("/data/static/bg2.gif"); background-color: #8B6A4A; border-right: solid #420; border-right-width: 4px; border-bottom: solid #420; }</STYLE>
+		<STYLE>HTML { background-image: url("/data/static/bg2.gif"); background-color: #8B6A4A; } .card { border-right: solid #420; border-right-width: 4px; border-bottom: solid #420; }</STYLE>
 		<STYLE>.admin { display: none; }</STYLE>
 	</HEAD>
 	<BODY>
@@ -14,6 +14,9 @@
 		<DIV class="card">
 			<H2>Error</H2>
 			<SPAN class="body error">{{.}}</SPAN>
+		</DIV>
+		<DIV class="footer">
+			{{template "credits"}}
 		</DIV>
 	</BODY>
 </HTML>

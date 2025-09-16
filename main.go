@@ -30,7 +30,7 @@ import (
 )
 
 func main() {
-	log.Printf("tanuki bbs by Pancakes (pancakes@mooglepowered.com)\n")
+	log.Printf("Tanuki BBS by Pancakes (pancakes@mooglepowered.com)\n")
 	log.Printf("https://github.com/patapancakes/tanuki\n")
 
 	configpath := flag.String("config", "config.json", "path to config file")
