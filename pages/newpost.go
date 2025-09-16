@@ -21,6 +21,7 @@ package pages
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"image/jpeg"
 	"image/png"
 	"net/http"
@@ -132,10 +133,10 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 			scale = float64(Config.ThumbnailDimensions) / float64(img.Bounds().Dy())
 		}
 
-		obounds := image.Rect(0, 0, int(scale*float64(img.Bounds().Dx())), int(scale*float64(img.Bounds().Dy())))
-		oimg := image.NewRGBA(obounds)
+		oimg := image.NewRGBA(image.Rect(0, 0, int(scale*float64(img.Bounds().Dx())), int(scale*float64(img.Bounds().Dy()))))
 
-		draw.BiLinear.Scale(oimg, obounds, img, img.Bounds(), draw.Over, nil)
+		draw.Draw(oimg, oimg.Bounds(), image.NewUniform(color.White), image.Point{}, draw.Src)
+		draw.BiLinear.Scale(oimg, oimg.Bounds(), img, img.Bounds(), draw.Over, nil)
 
 		of, err = os.OpenFile(post.ThumbPath(), os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
