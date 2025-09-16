@@ -6,6 +6,9 @@
 
 	"adminPassword": "",
 
+	"identitySecret": "",
+	"identityStrength": 1,
+
 	"postCooldown": 30,
 	"adminCooldown": 5,
 

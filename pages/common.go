@@ -19,10 +19,14 @@
 package pages
 
 import (
+	"encoding/base64"
 	"html/template"
 	"math/rand/v2"
+	"net/http"
+	"net/netip"
 
 	. "github.com/patapancakes/tanuki/config"
+	"golang.org/x/crypto/argon2"
 
 	"github.com/xeonx/timeago"
 )
@@ -84,4 +88,28 @@ func Init() error {
 	}
 
 	return nil
+}
+
+func deriveIdentity(r *http.Request) string {
+	// get ip
+	addrport, _ := netip.ParseAddrPort(r.RemoteAddr)
+
+	ip := addrport.Addr()
+	if addrport.Addr().IsLoopback() && r.Header.Get("X-Forwarded-For") != "" {
+		ip, _ = netip.ParseAddr(r.Header.Get("X-Forwarded-For"))
+	}
+
+	if ip.Is6() && !ip.Is4In6() {
+		prefix, _ := ip.Prefix(64)
+		ip = prefix.Addr()
+	}
+
+	// no identity secret, return ip
+	if Config.IdentitySecret == "" {
+		return ip.String()
+	}
+
+	binaddr := ip.As16()
+
+	return base64.StdEncoding.EncodeToString(argon2.IDKey(binaddr[:], []byte(Config.IdentitySecret), uint32(Config.IdentityStrength), 64*1024, 4, 16))
 }

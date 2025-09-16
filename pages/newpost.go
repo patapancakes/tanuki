@@ -24,7 +24,6 @@ import (
 	"image/jpeg"
 	"image/png"
 	"net/http"
-	"net/netip"
 	"os"
 	"strconv"
 	"strings"
@@ -45,13 +44,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxUploadSize)*1024)
 
 	// poster
-	addrport, err := netip.ParseAddrPort(r.RemoteAddr)
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to parse remote address: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	poster, err := GetPoster(addrport.Addr().String())
+	poster, err := GetPoster(deriveIdentity(r))
 	if err != nil && err != ErrUnknownPoster {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -68,7 +61,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 	// post
 	var post Post
 
-	post.Poster = addrport.Addr().String()
+	post.Poster = deriveIdentity(r)
 
 	post.Name = strings.TrimSpace(r.PostFormValue("name"))
 	if !utf8.ValidString(post.Name) || utf8.RuneCountInString(post.Name) > Config.MaxNameLength {
@@ -164,7 +157,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = AddPoster(addrport.Addr().String(), Poster{LastPost: post.Posted})
+	err = AddPoster(deriveIdentity(r), Poster{LastPost: post.Posted})
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
 		return

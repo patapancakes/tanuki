@@ -32,11 +32,8 @@ func writeError(w http.ResponseWriter, r *http.Request, error string, code int) 
 
 	errorT.Execute(w, error)
 
-	addr := "unknown"
-	addrport, err := netip.ParseAddrPort(r.RemoteAddr)
-	if err == nil {
-		addr = addrport.Addr().String()
-	}
+	addrport, _ := netip.ParseAddrPort(r.RemoteAddr)
+	addr := addrport.Addr().String()
 
 	log.Printf("[%s] %s: %s", addr, r.URL.Path, error)
 }

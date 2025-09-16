@@ -75,13 +75,13 @@ func writePosters(posters PosterData) error {
 	return nil
 }
 
-func GetPoster(ip string) (Poster, error) {
+func GetPoster(id string) (Poster, error) {
 	posters, err := readPosters()
 	if err != nil {
 		return Poster{}, fmt.Errorf("failed to fetch posters: %s", err)
 	}
 
-	poster, ok := posters[ip]
+	poster, ok := posters[id]
 	if !ok {
 		return Poster{}, ErrUnknownPoster
 	}
@@ -89,13 +89,13 @@ func GetPoster(ip string) (Poster, error) {
 	return poster, nil
 }
 
-func AddPoster(ip string, poster Poster) error {
+func AddPoster(id string, poster Poster) error {
 	posters, err := readPosters()
 	if err != nil {
 		return fmt.Errorf("failed to fetch posters: %s", err)
 	}
 
-	posters[ip] = poster
+	posters[id] = poster
 
 	err = writePosters(posters)
 	if err != nil {

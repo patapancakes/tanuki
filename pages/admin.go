@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"net/netip"
 	"strconv"
 	"time"
 
@@ -52,13 +51,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// rate limiting
-	addrport, err := netip.ParseAddrPort(r.RemoteAddr)
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to parse remote address: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	poster, err := GetPoster(addrport.Addr().String())
+	poster, err := GetPoster(deriveIdentity(r))
 	if err != nil && err != ErrUnknownPoster {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -74,7 +67,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 
 	poster.LastAdmin = time.Now().UTC()
 
-	err = AddPoster(addrport.Addr().String(), poster)
+	err = AddPoster(deriveIdentity(r), poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
 		return
@@ -117,13 +110,7 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// rate limiting
-	addrport, err := netip.ParseAddrPort(r.RemoteAddr)
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to parse remote address: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	poster, err := GetPoster(addrport.Addr().String())
+	poster, err := GetPoster(deriveIdentity(r))
 	if err != nil && err != ErrUnknownPoster {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -139,7 +126,7 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 
 	poster.LastAdmin = time.Now().UTC()
 
-	err = AddPoster(addrport.Addr().String(), poster)
+	err = AddPoster(deriveIdentity(r), poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
 		return
@@ -178,13 +165,7 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// rate limiting
-	addrport, err := netip.ParseAddrPort(r.RemoteAddr)
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to parse remote address: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	poster, err := GetPoster(addrport.Addr().String())
+	poster, err := GetPoster(deriveIdentity(r))
 	if err != nil && err != ErrUnknownPoster {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -200,7 +181,7 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 
 	poster.LastAdmin = time.Now().UTC()
 
-	err = AddPoster(addrport.Addr().String(), poster)
+	err = AddPoster(deriveIdentity(r), poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
 		return
