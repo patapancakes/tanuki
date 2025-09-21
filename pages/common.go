@@ -99,11 +99,6 @@ func deriveIdentity(r *http.Request) string {
 		ip, _ = netip.ParseAddr(r.Header.Get("X-Forwarded-For"))
 	}
 
-	if ip.Is6() && !ip.Is4In6() {
-		prefix, _ := ip.Prefix(64)
-		ip = prefix.Addr()
-	}
-
 	// no identity secret, return ip
 	if Config.IdentitySecret == "" {
 		return ip.String()
