@@ -10,7 +10,7 @@
 	</HEAD>
 	<BODY>
 		{{template "header"}}
-		{{template "postform" 0}}
+		{{if not (and config.AdminPostOnly (not .Admin))}}{{template "postform" 0}}{{end}}
 		{{range .Posts}}{{template "postpreview" .}}{{end}}
 		<DIV class="footer">
 			{{template "credits"}}

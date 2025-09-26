@@ -11,7 +11,7 @@
 	<BODY>
 		{{template "header"}}
 		{{template "post" .Post}}
-		{{template "postform" .Post.ID}}
+		{{if not (and config.AdminPostOnly (not .Admin))}}{{template "postform" .Post.ID}}{{end}}
 		<DIV class="footer">
 			{{template "credits"}}
 		</DIV>
