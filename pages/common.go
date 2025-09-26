@@ -112,5 +112,5 @@ func deriveIdentity(r *http.Request) (string, error) {
 
 	binaddr := ip.As16()
 
-	return base64.StdEncoding.EncodeToString(argon2.IDKey(binaddr[:], []byte(Config.IdentitySecret), uint32(Config.IdentityStrength), 64*1024, 4, 16)), nil
+	return base64.StdEncoding.EncodeToString(argon2.IDKey(binaddr[:], []byte(Config.IdentitySecret), uint32(Config.IdentityStrength), 64*1024, 4, 20)), nil
 }
