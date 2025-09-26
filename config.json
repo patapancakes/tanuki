@@ -5,6 +5,7 @@
 	"siteSlogans": [],
 
 	"adminPassword": "",
+	"adminPostOnly": false,
 
 	"identitySecret": "",
 	"identityStrength": 1,

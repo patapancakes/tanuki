@@ -44,6 +44,17 @@ import (
 func NewPost(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxUploadSize)*1024)
 
+	if Config.AdminPostOnly {
+		if Config.AdminPassword == "" {
+			writeError(w, r, "admin password not set", http.StatusForbidden)
+			return
+		}
+		if r.FormValue("password") != Config.AdminPassword {
+			writeError(w, r, "incorrect password", http.StatusUnauthorized)
+			return
+		}
+	}
+
 	// poster
 	identity, err := deriveIdentity(r)
 	if err != nil {
