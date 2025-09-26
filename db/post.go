@@ -229,14 +229,14 @@ func DeletePostImages(post Post) error {
 	return nil
 }
 
-func DeletePosterPosts(ip string) error {
+func DeletePosterPosts(id string) error {
 	posts, err := readPosts()
 	if err != nil {
 		return fmt.Errorf("failed to fetch posts: %s", err)
 	}
 
 	for _, thread := range posts {
-		if thread.Poster == ip {
+		if thread.Poster == id {
 			err = DeletePost(thread.ID)
 			if err != nil {
 				return fmt.Errorf("failed to delete post: %s", err)
@@ -246,7 +246,7 @@ func DeletePosterPosts(ip string) error {
 		}
 
 		for _, reply := range thread.Replies {
-			if reply.Poster != ip {
+			if reply.Poster != id {
 				continue
 			}
 

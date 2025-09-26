@@ -32,9 +32,6 @@ type ConfigFile struct {
 	AdminPassword string `json:"adminPassword"`
 	AdminPostOnly bool   `json:"adminPostOnly"`
 
-	IdentitySecret   string `json:"identitySecret"`
-	IdentityStrength int    `json:"identityStrength"`
-
 	PostCooldown  int `json:"postCooldown"` // in seconds
 	AdminCooldown int `json:"adminCooldown"`
 

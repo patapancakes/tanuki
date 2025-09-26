@@ -19,14 +19,12 @@
 package pages
 
 import (
-	"encoding/base64"
 	"html/template"
 	"math/rand/v2"
 	"net/http"
 	"net/netip"
 
 	. "github.com/patapancakes/tanuki/config"
-	"golang.org/x/crypto/argon2"
 
 	"github.com/xeonx/timeago"
 )
@@ -105,12 +103,5 @@ func deriveIdentity(r *http.Request) (string, error) {
 		}
 	}
 
-	// no identity secret, return ip
-	if Config.IdentitySecret == "" {
-		return ip.String(), nil
-	}
-
-	binaddr := ip.As16()
-
-	return base64.StdEncoding.EncodeToString(argon2.IDKey(binaddr[:], []byte(Config.IdentitySecret), uint32(Config.IdentityStrength), 64*1024, 4, 20)), nil
+	return ip.String(), nil
 }
