@@ -10,7 +10,7 @@ A:hover { text-decoration: underline; }
 .slogan { font-style: italic; }
 
 #postform TABLE { text-align: left; display: inline; }
-#postform INPUT, #postform TEXTAREA { width: 400px; }
+#postform INPUT, #postform TEXTAREA { width: 100%; }
 #postform #image { width: 74%; }
 #postform #submit { width: 25%; }
 #postform #comment { resize: vertical; }

@@ -3,6 +3,7 @@
 	<HEAD>
 		<TITLE>{{if ne .Post.Subject ""}}{{.Post.Subject}} - {{end}}{{config.SiteName}}</TITLE>
 		<META http-equiv="content-type" content="text/html; charset=utf-8">
+		<META name="viewport" content="width=device-width, initial-scale=1">
 		<LINK rel="icon" type="image/x-icon" href="/data/static/leaf.ico">
 		<LINK rel="stylesheet" href="/data/static/style.css" type="text/css">
 		{{if not .Admin}}<STYLE>.admin { display: none; }</STYLE>{{end}}
