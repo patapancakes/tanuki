@@ -90,21 +90,27 @@ func Init() error {
 	return nil
 }
 
-func deriveIdentity(r *http.Request) string {
+func deriveIdentity(r *http.Request) (string, error) {
 	// get ip
-	addrport, _ := netip.ParseAddrPort(r.RemoteAddr)
+	addrport, err := netip.ParseAddrPort(r.RemoteAddr)
+	if err != nil {
+		return "", err
+	}
 
 	ip := addrport.Addr()
 	if addrport.Addr().IsLoopback() && r.Header.Get("X-Forwarded-For") != "" {
-		ip, _ = netip.ParseAddr(r.Header.Get("X-Forwarded-For"))
+		ip, err = netip.ParseAddr(r.Header.Get("X-Forwarded-For"))
+		if err != nil {
+			return "", err
+		}
 	}
 
 	// no identity secret, return ip
 	if Config.IdentitySecret == "" {
-		return ip.String()
+		return ip.String(), nil
 	}
 
 	binaddr := ip.As16()
 
-	return base64.StdEncoding.EncodeToString(argon2.IDKey(binaddr[:], []byte(Config.IdentitySecret), uint32(Config.IdentityStrength), 64*1024, 4, 16))
+	return base64.StdEncoding.EncodeToString(argon2.IDKey(binaddr[:], []byte(Config.IdentitySecret), uint32(Config.IdentityStrength), 64*1024, 4, 16)), nil
 }
