@@ -1,6 +1,8 @@
 @font-face { font-family: "KosugiMaru"; src: url("KosugiMaru-Regular.ttf"); }
 
 HTML { font-family: 'MS UI Gothic', 'KosugiMaru', sans-serif; background-image: url("bg.gif"); background-color: #4A8B4A; }
+BODY { width: 960px; margin: 0 auto; }
+@media (max-width: 960px) { BODY { width: 100%; } }
 
 A { text-decoration: none; font-weight: bold; }
 A:hover { text-decoration: underline; }
@@ -10,11 +12,9 @@ A:hover { text-decoration: underline; }
 .slogan { font-style: italic; }
 
 #postform TABLE { text-align: left; display: inline; }
-#postform INPUT, #postform TEXTAREA { width: 100%; }
-#postform #image { width: 74%; }
-#postform #submit { width: 25%; }
+#postform INPUT, #postform TEXTAREA { width: 400px; box-sizing: border-box; }
+@media (max-width: 960px) { #postform INPUT, #postform TEXTAREA { width: 100%; } }
 #postform #comment { resize: vertical; }
-#postform #submit { float: right; }
 
 #adminform TABLE { text-align: left; display: inline; }
 #adminform #submit { width: 100%; }

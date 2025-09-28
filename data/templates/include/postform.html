@@ -16,12 +16,13 @@
 			</TR>
 			<TR>
 				<TD><LABEL for="image">Image</LABEL></TD>
-				<TD>
-					<INPUT type="submit" value="Submit" id="submit">
-					<INPUT type="file" name="image" id="image" accept="image/bmp, image/png, image/jpeg, image/gif">
-					<INPUT type="hidden" name="parent" value="{{.}}">
-				</TD>
+				<TD><INPUT type="file" name="image" id="image" accept="image/bmp, image/png, image/jpeg, image/gif"></TD>
+			</TR>
+			<TR>
+				<TD></TD>
+				<TD><INPUT type="submit" value="Submit" id="submit"></TD>
 			</TR>
 		</TABLE>
+		<INPUT type="hidden" name="parent" value="{{.}}">
 	</FORM>
 </DIV>{{end}}
