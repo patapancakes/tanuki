@@ -21,6 +21,7 @@ package db
 import (
 	"errors"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -46,6 +47,20 @@ func (p Post) FullPath() string {
 	return fmt.Sprintf("data/full/%d.png", p.Posted.UnixMilli())
 }
 
+func (p Post) DeleteImage() error {
+	err := os.Remove(p.FullPath())
+	if err != nil {
+		return fmt.Errorf("failed to delete full image: %s", err)
+	}
+
+	err = os.Remove(p.ThumbPath())
+	if err != nil {
+		return fmt.Errorf("failed to delete thumbnail image: %s", err)
+	}
+
+	return nil
+}
+
 type PostData []Post
 
 type PostDB interface {
@@ -53,6 +68,5 @@ type PostDB interface {
 	Get(id int) (Post, error)
 	Add(post Post) (int, error)
 	Delete(id int) error
-	DeleteImage(post Post) error
 	DeletePoster(id string) error
 }

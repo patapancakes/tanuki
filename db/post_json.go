@@ -166,7 +166,7 @@ func (p PostJSON) Delete(id int) error {
 				continue
 			}
 
-			err = p.DeleteImage(reply)
+			err = reply.DeleteImage()
 			if err != nil {
 				return fmt.Errorf("failed to delete reply images: %s", err)
 			}
@@ -181,7 +181,7 @@ func (p PostJSON) Delete(id int) error {
 		return ErrUnknownPost
 	}
 	if post.Image {
-		err = p.DeleteImage(post)
+		err = post.DeleteImage()
 		if err != nil {
 			return fmt.Errorf("failed to delete post images: %s", err)
 		}
@@ -190,20 +190,6 @@ func (p PostJSON) Delete(id int) error {
 	err = p.write(posts)
 	if err != nil {
 		return fmt.Errorf("failed to write posts: %s", err)
-	}
-
-	return nil
-}
-
-func (p PostJSON) DeleteImage(post Post) error {
-	err := os.Remove(post.FullPath())
-	if err != nil {
-		return fmt.Errorf("failed to delete full image: %s", err)
-	}
-
-	err = os.Remove(post.ThumbPath())
-	if err != nil {
-		return fmt.Errorf("failed to delete thumbnail image: %s", err)
 	}
 
 	return nil
