@@ -66,7 +66,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hd.Posts, err = GetPosts()
+	hd.Posts, err = posts.GetAll()
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to fetch posts: %s", err), http.StatusInternalServerError)
 		return

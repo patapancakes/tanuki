@@ -19,14 +19,9 @@
 package db
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
-	"os"
 	"time"
 )
-
-const postersFile = "data/posters.json"
 
 var ErrUnknownPoster = errors.New("unknown poster")
 
@@ -38,69 +33,7 @@ type Poster struct {
 
 type PosterData map[string]Poster
 
-func readPosters() (PosterData, error) {
-	f, err := os.Open(postersFile)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return make(PosterData), nil
-		}
-
-		return nil, fmt.Errorf("failed to open posters file: %s", err)
-	}
-
-	defer f.Close()
-
-	posters := make(PosterData)
-	err = json.NewDecoder(f).Decode(&posters)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode posters file: %s", err)
-	}
-
-	return posters, nil
-}
-
-func writePosters(posters PosterData) error {
-	f, err := os.OpenFile(postersFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
-	if err != nil {
-		return fmt.Errorf("failed to open posters file: %s", err)
-	}
-
-	defer f.Close()
-
-	err = json.NewEncoder(f).Encode(posters)
-	if err != nil {
-		return fmt.Errorf("failed to encode posters file: %s", err)
-	}
-
-	return nil
-}
-
-func GetPoster(id string) (Poster, error) {
-	posters, err := readPosters()
-	if err != nil {
-		return Poster{}, fmt.Errorf("failed to fetch posters: %s", err)
-	}
-
-	poster, ok := posters[id]
-	if !ok {
-		return Poster{}, ErrUnknownPoster
-	}
-
-	return poster, nil
-}
-
-func AddPoster(id string, poster Poster) error {
-	posters, err := readPosters()
-	if err != nil {
-		return fmt.Errorf("failed to fetch posters: %s", err)
-	}
-
-	posters[id] = poster
-
-	err = writePosters(posters)
-	if err != nil {
-		return fmt.Errorf("failed to insert poster: %s", err)
-	}
-
-	return nil
+type PosterDB interface {
+	Get(id string) (Poster, error)
+	Add(id string, poster Poster) error
 }

@@ -57,7 +57,7 @@ func Thread(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	td.Post, err = GetPost(id)
+	td.Post, err = posts.Get(id)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to fetch post: %s", err), http.StatusInternalServerError)
 		return

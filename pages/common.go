@@ -26,18 +26,24 @@ import (
 	"net/netip"
 
 	. "github.com/patapancakes/tanuki/config"
+	"github.com/patapancakes/tanuki/db"
 
 	"github.com/xeonx/timeago"
 )
 
-var funcs = template.FuncMap{
-	"timeago": timeago.English.Format,
-	"sum":     func(a, b int) int { return a + b },
-	"sub":     func(a, b int) int { return a - b },
-	"max":     func(a, b int) int { return max(a, b) },
-	"config":  func() ConfigFile { return Config },
-	"rand":    rand.IntN,
-}
+var (
+	funcs = template.FuncMap{
+		"timeago": timeago.English.Format,
+		"sum":     func(a, b int) int { return a + b },
+		"sub":     func(a, b int) int { return a - b },
+		"max":     func(a, b int) int { return max(a, b) },
+		"config":  func() ConfigFile { return Config },
+		"rand":    rand.IntN,
+	}
+
+	posts   db.PostDB
+	posters db.PosterDB
+)
 
 func Init(fs fs.FS) error {
 	var err error
@@ -85,6 +91,10 @@ func Init(fs fs.FS) error {
 	if err != nil {
 		return err
 	}
+
+	// database
+	posts = db.NewPostJSON("data/posts.json")
+	posters = db.NewPosterJSON("data/posters.json")
 
 	return nil
 }

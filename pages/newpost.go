@@ -62,7 +62,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poster, err := GetPoster(identity)
+	poster, err := posters.Get(identity)
 	if err != nil && err != ErrUnknownPoster {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -175,13 +175,13 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = AddPoster(identity, Poster{LastPost: post.Posted})
+	err = posters.Add(identity, Poster{LastPost: post.Posted})
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
 		return
 	}
 
-	post.ID, err = AddPost(post)
+	post.ID, err = posts.Add(post)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert post: %s", err), http.StatusInternalServerError)
 		return

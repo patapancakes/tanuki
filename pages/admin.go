@@ -57,7 +57,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poster, err := GetPoster(identity)
+	poster, err := posters.Get(identity)
 	if err != nil && err != ErrUnknownPoster {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -73,7 +73,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 
 	poster.LastAdmin = time.Now().UTC()
 
-	err = AddPoster(identity, poster)
+	err = posters.Add(identity, poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
 		return
@@ -122,7 +122,7 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poster, err := GetPoster(identity)
+	poster, err := posters.Get(identity)
 	if err != nil && err != ErrUnknownPoster {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -138,7 +138,7 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 
 	poster.LastAdmin = time.Now().UTC()
 
-	err = AddPoster(identity, poster)
+	err = posters.Add(identity, poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
 		return
@@ -161,7 +161,7 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = DeletePost(id)
+	err = posts.Delete(id)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to delete post: %s", err), http.StatusInternalServerError)
 		return
@@ -183,7 +183,7 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poster, err := GetPoster(identity)
+	poster, err := posters.Get(identity)
 	if err != nil && err != ErrUnknownPoster {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -199,7 +199,7 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 
 	poster.LastAdmin = time.Now().UTC()
 
-	err = AddPoster(identity, poster)
+	err = posters.Add(identity, poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
 		return
@@ -222,13 +222,13 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	post, err := GetPost(id)
+	post, err := posts.Get(id)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to fetch post: %s", err), http.StatusInternalServerError)
 		return
 	}
 
-	poster, err = GetPoster(post.Poster)
+	poster, err = posters.Get(post.Poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -236,13 +236,13 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 
 	poster.Banned = true
 
-	err = AddPoster(post.Poster, poster)
+	err = posters.Add(post.Poster, poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
 		return
 	}
 
-	err = DeletePosterPosts(post.Poster)
+	err = posts.DeletePoster(post.Poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to delete poster posts: %s", err), http.StatusInternalServerError)
 		return
