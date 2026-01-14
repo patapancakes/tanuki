@@ -40,7 +40,7 @@ func main() {
 	log.Printf("Tanuki BBS by Pancakes (pancakes@mooglepowered.com)\n")
 	log.Printf("https://github.com/patapancakes/tanuki\n")
 
-	configpath := flag.String("config", "config.json", "path to config file")
+	configpath := flag.String("config", "config.yml", "path to config file")
 	flag.Parse()
 
 	err := InitConfig(*configpath)

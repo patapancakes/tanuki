@@ -4,4 +4,6 @@ go 1.25.1
 
 require github.com/xeonx/timeago v1.0.0-rc5
 
-require golang.org/x/image v0.31.0
+require golang.org/x/image v0.35.0
+
+require gopkg.in/yaml.v3 v3.0.1

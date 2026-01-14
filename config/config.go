@@ -19,34 +19,35 @@
 package config
 
 import (
-	"encoding/json"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 type ConfigFile struct {
-	Port int `json:"port"`
+	Port int `yaml:"port"`
 
-	SiteName    string   `json:"siteName"`
-	SiteSlogans []string `json:"siteSlogans"`
+	SiteName    string   `yaml:"siteName"`
+	SiteSlogans []string `yaml:"siteSlogans"`
 
-	AdminPassword string `json:"adminPassword"`
-	AdminPostOnly bool   `json:"adminPostOnly"`
+	AdminPassword string `yaml:"adminPassword"`
+	AdminPostOnly bool   `yaml:"adminPostOnly"`
 
-	PostCooldown  int `json:"postCooldown"` // in seconds
-	AdminCooldown int `json:"adminCooldown"`
+	PostCooldown  int `yaml:"postCooldown"` // in seconds
+	AdminCooldown int `yaml:"adminCooldown"`
 
-	MaxPostsPerPage int `json:"maxPostsPerPage"`
-	MaxPages        int `json:"maxPages"`
-	MaxBumps        int `json:"maxBumps"`
+	MaxPostsPerPage int `yaml:"maxPostsPerPage"`
+	MaxPages        int `yaml:"maxPages"`
+	MaxBumps        int `yaml:"maxBumps"`
 
-	MaxNameLength    int `json:"maxNameLength"`
-	MaxSubjectLength int `json:"maxSubjectLength"`
-	MaxCommentLength int `json:"maxCommentLength"`
+	MaxNameLength    int `yaml:"maxNameLength"`
+	MaxSubjectLength int `yaml:"maxSubjectLength"`
+	MaxCommentLength int `yaml:"maxCommentLength"`
 
-	MaxUploadSize int `json:"maxUploadSize"` // in kilobytes
+	MaxUploadSize int `yaml:"maxUploadSize"` // in kilobytes
 
-	ThumbnailDimensions int `json:"thumbnailDimensions"`
-	ThumbnailQuality    int `json:"thumbnailQuality"`
+	ThumbnailDimensions int `yaml:"thumbnailDimensions"`
+	ThumbnailQuality    int `yaml:"thumbnailQuality"`
 }
 
 var Config ConfigFile
@@ -59,7 +60,7 @@ func InitConfig(path string) error {
 
 	defer f.Close()
 
-	err = json.NewDecoder(f).Decode(&Config)
+	err = yaml.NewDecoder(f).Decode(&Config)
 	if err != nil {
 		return err
 	}
