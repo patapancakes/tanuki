@@ -23,7 +23,6 @@ import (
 	"html/template"
 	"math"
 	"net/http"
-	"slices"
 	"strconv"
 
 	. "github.com/patapancakes/tanuki/config"
@@ -80,21 +79,6 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-
-	// sort threads by newest reply
-	slices.SortFunc(hd.Posts, func(a, b Post) int {
-		t1 := a.Posted
-		if len(a.Replies) != 0 {
-			t1 = a.Replies[min(Config.MaxBumps, len(a.Replies))-1].Posted
-		}
-
-		t2 := b.Posted
-		if len(b.Replies) != 0 {
-			t2 = b.Replies[min(Config.MaxBumps, len(b.Replies))-1].Posted
-		}
-
-		return t2.Compare(t1)
-	})
 
 	hd.Posts = hd.Posts[min((hd.Page-1)*Config.MaxPostsPerPage, len(hd.Posts)):]
 	hd.Posts = hd.Posts[:min(Config.MaxPostsPerPage, len(hd.Posts))]

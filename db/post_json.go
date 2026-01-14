@@ -23,6 +23,8 @@ import (
 	"fmt"
 	"os"
 	"slices"
+
+	. "github.com/patapancakes/tanuki/config"
 )
 
 type PostJSON struct {
@@ -71,7 +73,27 @@ func (p PostJSON) write(posts PostData) error {
 }
 
 func (p PostJSON) GetAll() (PostData, error) {
-	return p.read()
+	posts, err := p.read()
+	if err != nil {
+		return nil, err
+	}
+
+	// sort threads by newest reply
+	slices.SortFunc(posts, func(a, b Post) int {
+		t1 := a.Posted
+		if len(a.Replies) != 0 {
+			t1 = a.Replies[min(Config.MaxBumps, len(a.Replies))-1].Posted
+		}
+
+		t2 := b.Posted
+		if len(b.Replies) != 0 {
+			t2 = b.Replies[min(Config.MaxBumps, len(b.Replies))-1].Posted
+		}
+
+		return t2.Compare(t1)
+	})
+
+	return posts, nil
 }
 
 func (p PostJSON) Get(id int) (Post, error) {
