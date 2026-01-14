@@ -8,7 +8,7 @@
 		{{if gt (len config.SiteSlogans) 0}}<META name="description" content="{{index config.SiteSlogans (rand (len config.SiteSlogans))}}">{{end}}
 		<LINK rel="icon" type="image/x-icon" href="/data/static/icon.ico">
 		<LINK rel="stylesheet" href="/data/static/style.css" type="text/css">
-		{{if not .Admin}}<STYLE>.admin { display: none; }</STYLE>{{end}}
+		{{if not .Admin}}<STYLE type="text/css">.admin { display: none; }</STYLE>{{end}}
 	</HEAD>
 	<BODY>
 		{{template "header"}}
