@@ -21,11 +21,7 @@ package pages
 import (
 	"fmt"
 	"image"
-	"image/color"
-	"image/jpeg"
-	"image/png"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -37,8 +33,6 @@ import (
 	_ "image/gif"
 
 	_ "golang.org/x/image/bmp"
-
-	"golang.org/x/image/draw"
 )
 
 func NewPost(w http.ResponseWriter, r *http.Request) {
@@ -129,43 +123,9 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// full image
-		of, err := os.OpenFile(post.FullPath(), os.O_CREATE|os.O_WRONLY, 0644)
+		err = post.WriteImage(img)
 		if err != nil {
-			writeError(w, r, fmt.Sprintf("failed to open output image file for writing: %s", err), http.StatusInternalServerError)
-			return
-		}
-
-		defer of.Close()
-
-		err = png.Encode(of, img)
-		if err != nil {
-			writeError(w, r, fmt.Sprintf("failed to encode image: %s", err), http.StatusInternalServerError)
-			return
-		}
-
-		// thumbnail image
-		scale := float64(Config.ThumbnailDimensions) / float64(img.Bounds().Dx()) // assume landscape
-		if img.Bounds().Dy() >= img.Bounds().Dx() {                               // it's not
-			scale = float64(Config.ThumbnailDimensions) / float64(img.Bounds().Dy())
-		}
-
-		oimg := image.NewRGBA(image.Rect(0, 0, int(scale*float64(img.Bounds().Dx())), int(scale*float64(img.Bounds().Dy()))))
-
-		draw.Draw(oimg, oimg.Bounds(), image.NewUniform(color.White), image.Point{}, draw.Src)
-		draw.BiLinear.Scale(oimg, oimg.Bounds(), img, img.Bounds(), draw.Over, nil)
-
-		of, err = os.OpenFile(post.ThumbPath(), os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			writeError(w, r, fmt.Sprintf("failed to open output image file for writing: %s", err), http.StatusInternalServerError)
-			return
-		}
-
-		defer of.Close()
-
-		err = jpeg.Encode(of, oimg, &jpeg.Options{Quality: Config.ThumbnailQuality})
-		if err != nil {
-			writeError(w, r, fmt.Sprintf("failed to encode image: %s", err), http.StatusInternalServerError)
+			writeError(w, r, fmt.Sprintf("failed to write image files: %s", err), http.StatusInternalServerError)
 			return
 		}
 	}

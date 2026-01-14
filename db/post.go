@@ -21,8 +21,16 @@ package db
 import (
 	"errors"
 	"fmt"
+	"image"
+	"image/color"
+	"image/jpeg"
+	"image/png"
 	"os"
 	"time"
+
+	. "github.com/patapancakes/tanuki/config"
+
+	"golang.org/x/image/draw"
 )
 
 var ErrUnknownPost = errors.New("unknown post")
@@ -56,6 +64,46 @@ func (p Post) DeleteImage() error {
 	err = os.Remove(p.ThumbPath())
 	if err != nil {
 		return fmt.Errorf("failed to delete thumbnail image: %s", err)
+	}
+
+	return nil
+}
+
+func (p Post) WriteImage(img image.Image) error {
+	// full image
+	of, err := os.OpenFile(p.FullPath(), os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+
+	defer of.Close()
+
+	err = png.Encode(of, img)
+	if err != nil {
+		return err
+	}
+
+	// thumbnail image
+	scale := float64(Config.ThumbnailDimensions) / float64(img.Bounds().Dx()) // assume landscape
+	if img.Bounds().Dy() >= img.Bounds().Dx() {                               // it's not
+		scale = float64(Config.ThumbnailDimensions) / float64(img.Bounds().Dy())
+	}
+
+	oimg := image.NewRGBA(image.Rect(0, 0, int(scale*float64(img.Bounds().Dx())), int(scale*float64(img.Bounds().Dy()))))
+
+	draw.Draw(oimg, oimg.Bounds(), image.NewUniform(color.White), image.Point{}, draw.Src)
+	draw.BiLinear.Scale(oimg, oimg.Bounds(), img, img.Bounds(), draw.Over, nil)
+
+	of, err = os.OpenFile(p.ThumbPath(), os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+
+	defer of.Close()
+
+	err = jpeg.Encode(of, oimg, &jpeg.Options{Quality: Config.ThumbnailQuality})
+	if err != nil {
+		return err
 	}
 
 	return nil
