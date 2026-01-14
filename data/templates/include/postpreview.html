@@ -7,7 +7,7 @@
 		</DIV>
 		<SPAN class="name" title="Name">{{.Name}}</SPAN>
 		<SPAN class="subject" title="Subject">{{.Subject}}</SPAN>
-		<SPAN class="time" title="{{.Posted}}">{{timeago .Posted}}</SPAN>
+		<SPAN class="time" title="{{.Posted.Format "2006-01-02 15:04:05"}}">{{timeago .Posted}}</SPAN>
 	</DIV>
 	<DIV class="body">
 		{{if .Image}}<A href="/{{.FullPath}}" target="_blank"><IMG src="/{{.ThumbPath}}" alt=""></A>{{end}}
@@ -24,7 +24,7 @@
 							<A href="/admin/ban/{{.ID}}" class="admin">Ban</A>
 						</DIV>
 						<SPAN class="name" title="Name">{{.Name}}</SPAN>
-						<SPAN class="time" title="{{.Posted}}">{{timeago .Posted}}</SPAN>
+						<SPAN class="time" title="{{.Posted.Format "2006-01-02 15:04:05"}}">{{timeago .Posted}}</SPAN>
 					</DIV>
 					<DIV class="body">
 						{{if .Image}}<A href="/{{.FullPath}}" target="_blank"><IMG src="/{{.ThumbPath}}" alt=""></A>{{end}}
