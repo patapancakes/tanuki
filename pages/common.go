@@ -20,6 +20,7 @@ package pages
 
 import (
 	"html/template"
+	"io/fs"
 	"math/rand/v2"
 	"net/http"
 	"net/netip"
@@ -38,49 +39,49 @@ var funcs = template.FuncMap{
 	"rand":    rand.IntN,
 }
 
-func Init() error {
+func Init(fs fs.FS) error {
 	var err error
 
 	// home
-	homeT, err = template.New("home.html").Funcs(funcs).ParseFiles("data/templates/home.html")
+	homeT, err = template.New("home.html").Funcs(funcs).ParseFS(fs, "data/templates/home.html")
 	if err != nil {
 		return err
 	}
 
-	homeT, err = homeT.ParseGlob("data/templates/include/*.html")
+	homeT, err = homeT.ParseFS(fs, "data/templates/include/*.html")
 	if err != nil {
 		return err
 	}
 
 	// thread
-	threadT, err = template.New("thread.html").Funcs(funcs).ParseFiles("data/templates/thread.html")
+	threadT, err = template.New("thread.html").Funcs(funcs).ParseFS(fs, "data/templates/thread.html")
 	if err != nil {
 		return err
 	}
 
-	threadT, err = threadT.ParseGlob("data/templates/include/*.html")
+	threadT, err = threadT.ParseFS(fs, "data/templates/include/*.html")
 	if err != nil {
 		return err
 	}
 
 	// error
-	errorT, err = template.New("error.html").Funcs(funcs).ParseFiles("data/templates/error.html")
+	errorT, err = template.New("error.html").Funcs(funcs).ParseFS(fs, "data/templates/error.html")
 	if err != nil {
 		return err
 	}
 
-	errorT, err = errorT.ParseGlob("data/templates/include/*.html")
+	errorT, err = errorT.ParseFS(fs, "data/templates/include/*.html")
 	if err != nil {
 		return err
 	}
 
 	// admin
-	adminT, err = template.New("admin.html").Funcs(funcs).ParseFiles("data/templates/admin.html")
+	adminT, err = template.New("admin.html").Funcs(funcs).ParseFS(fs, "data/templates/admin.html")
 	if err != nil {
 		return err
 	}
 
-	adminT, err = adminT.ParseGlob("data/templates/include/*.html")
+	adminT, err = adminT.ParseFS(fs, "data/templates/include/*.html")
 	if err != nil {
 		return err
 	}
