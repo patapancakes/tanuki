@@ -11,7 +11,7 @@ A:hover { text-decoration: underline; }
 
 .slogan { font-style: italic; }
 
-#postform TABLE { text-align: left; display: inline; }
+#postform TABLE { text-align: left; font-weight: bold; display: inline; }
 #postform INPUT, #postform TEXTAREA { width: 400px; box-sizing: border-box; }
 @media (max-width: 960px) { #postform INPUT, #postform TEXTAREA { width: 100%; } }
 #postform #comment { resize: vertical; }
