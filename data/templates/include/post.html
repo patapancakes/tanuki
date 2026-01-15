@@ -1,34 +1,8 @@
 {{define "post"}}<DIV class="card post" id="post{{.ID}}">
-	<DIV class="details">
-		<SPAN class="commands">
-			<A href="/admin/delete/{{.ID}}" class="admin">Delete</A>
-			<A href="/admin/ban/{{.ID}}" class="admin">Ban</A>
-			<A href="#postform">Reply</A>
-		</SPAN>
-		{{if eq .Poster "admin"}}<SPAN class="rank" title="Rank">&starf;</SPAN>{{end}}
-		<SPAN class="name" title="Name">{{.Name}}</SPAN>
-		<SPAN class="subject" title="Subject">{{.Subject}}</SPAN>
-		<SPAN class="time" title="{{.Posted.Format "2006-01-02 15:04:05"}}">{{timeago .Posted}}</SPAN>
-	</DIV>
-	<DIV class="body">
-		{{if .Image}}<A href="/{{.FullPath}}" target="_blank"><IMG src="/{{.ThumbPath}}" alt=""></A>{{end}}
-		{{if ne .Body ""}}<SPAN>{{.Body}}</SPAN>{{end}}
-	</DIV>
+	{{template "postbase" .}}
 	{{range .Replies}}
 	<DIV class="card subcard post" id="post{{.ID}}">
-		<DIV class="details">
-			<DIV class="commands">
-				<A href="/admin/delete/{{.ID}}" class="admin">Delete</A>
-				<A href="/admin/ban/{{.ID}}" class="admin">Ban</A>
-			</DIV>
-			{{if eq .Poster "admin"}}<SPAN class="rank" title="Rank">&starf;</SPAN>{{end}}
-			<SPAN class="name" title="Name">{{.Name}}</SPAN>
-			<SPAN class="time" title="{{.Posted.Format "2006-01-02 15:04:05"}}">{{timeago .Posted}}</SPAN>
-		</DIV>
-		<DIV class="body">
-			{{if .Image}}<A href="/{{.FullPath}}" target="_blank"><IMG src="/{{.ThumbPath}}" alt=""></A>{{end}}
-			{{if ne .Body ""}}<SPAN>{{.Body}}</SPAN>{{end}}
-		</DIV>
+		{{template "postbase" .}}
 	</DIV>
 	{{end}}
 </DIV>{{end}}

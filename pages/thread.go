@@ -62,7 +62,7 @@ func Thread(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, fmt.Sprintf("failed to fetch post: %s", err), http.StatusInternalServerError)
 		return
 	}
-	if td.Post.Parent != 0 {
+	if !td.Post.IsThread() {
 		http.Redirect(w, r, fmt.Sprintf("/thread/%d#post%d", td.Post.Parent, td.Post.ID), http.StatusSeeOther)
 		return
 	}

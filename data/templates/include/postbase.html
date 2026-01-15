@@ -1,0 +1,15 @@
+{{define "postbase"}}<DIV class="details">
+	<SPAN class="commands">
+		<A href="/admin/delete/{{.ID}}" class="admin">Delete</A>
+		<A href="/admin/ban/{{.ID}}" class="admin">Ban</A>
+		{{if .IsThread}}<A href="#postform">Reply</A>{{end}}
+	</SPAN>
+	{{if eq .Poster "admin"}}<SPAN class="rank" title="Rank">&starf;</SPAN>{{end}}
+	<SPAN class="name" title="Name">{{.Name}}</SPAN>
+	{{if .IsThread}}<SPAN class="subject" title="Subject">{{.Subject}}</SPAN>{{end}}
+	<SPAN class="time" title="{{.Posted.Format "2006-01-02 15:04:05"}}">{{timeago .Posted}}</SPAN>
+</DIV>
+<DIV class="body">
+	{{if .Image}}<A href="/{{.FullPath}}" target="_blank"><IMG src="/{{.ThumbPath}}" alt=""></A>{{end}}
+	{{if ne .Body ""}}<SPAN>{{.Body}}</SPAN>{{end}}
+</DIV>{{end}}

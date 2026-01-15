@@ -47,6 +47,10 @@ type Post struct {
 	Replies PostData  `json:"replies,omitempty"`
 }
 
+func (p Post) IsThread() bool {
+	return p.Parent == 0
+}
+
 func (p Post) ThumbPath() string {
 	return fmt.Sprintf("data/thumb/%d.jpg", p.Posted.UnixMilli())
 }
