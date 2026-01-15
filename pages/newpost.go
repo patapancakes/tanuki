@@ -159,7 +159,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	redirect := post.Parent
-	if post.Parent == 0 {
+	if post.IsThread() {
 		redirect = post.ID
 	}
 
