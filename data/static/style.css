@@ -36,5 +36,7 @@ A:hover { text-decoration: underline; }
 .reply { background-color: #EEE; border-right: solid #888; border-right-width: 2px; border-bottom: solid #888; border-bottom-width: 2px; }
 .reply-preview { width: 300px; }
 
+.credits SPAN { font-weight: bold; }
+
 .pagesel { float: left; margin: 0px; }
 .pagesel A { margin-left: 4px; margin-right: 4px; }
