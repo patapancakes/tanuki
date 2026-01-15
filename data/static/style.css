@@ -23,6 +23,7 @@ A:hover { text-decoration: underline; }
 .post { text-align: left; }
 .post IMG { border: 0px; }
 
+.rank { font-weight: bold; color: gold; }
 .name { font-weight: bold; color: #007F00; }
 .subject { font-weight: bolder; color: #F00; }
 .time { margin-left: 4px; color: #7F7F7F; }

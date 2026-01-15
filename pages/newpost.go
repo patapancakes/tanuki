@@ -38,15 +38,22 @@ import (
 func NewPost(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxUploadSize)*1024)
 
-	if Config.AdminPostOnly {
-		if Config.AdminPassword == "" {
-			writeError(w, r, "admin password not set", http.StatusForbidden)
-			return
+	// admin
+	var admin bool
+	if Config.AdminPassword != "" {
+		adminpw, err := r.Cookie("adminpw")
+		if err != nil {
+			if err != http.ErrNoCookie {
+				writeError(w, r, fmt.Sprintf("failed to read admin password cookie: %s", err), http.StatusBadRequest)
+				return
+			}
+		} else {
+			admin = adminpw.Value == Config.AdminPassword
 		}
-		if r.FormValue("password") != Config.AdminPassword {
-			writeError(w, r, "incorrect password", http.StatusUnauthorized)
-			return
-		}
+	}
+	if Config.AdminPostOnly && !admin {
+		writeError(w, r, "incorrect password", http.StatusUnauthorized)
+		return
 	}
 
 	// poster
@@ -74,6 +81,10 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 	var post Post
 
 	post.Poster = identity
+	if admin {
+		fmt.Println("is admin")
+		post.Poster = "admin"
+	}
 
 	post.Name = strings.TrimSpace(r.PostFormValue("name"))
 	if !utf8.ValidString(post.Name) || utf8.RuneCountInString(post.Name) > Config.MaxNameLength {
