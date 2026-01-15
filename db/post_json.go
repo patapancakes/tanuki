@@ -84,10 +84,16 @@ func (p PostJSON) GetAll() (PostData, error) {
 		if len(a.Replies) != 0 {
 			t1 = a.Replies[min(Config.MaxBumps, len(a.Replies))-1].Posted
 		}
-
 		t2 := b.Posted
 		if len(b.Replies) != 0 {
 			t2 = b.Replies[min(Config.MaxBumps, len(b.Replies))-1].Posted
+		}
+
+		if a.IsAdmin() && !b.IsAdmin() {
+			return -1
+		}
+		if b.IsAdmin() && !a.IsAdmin() {
+			return 1
 		}
 
 		return t2.Compare(t1)
