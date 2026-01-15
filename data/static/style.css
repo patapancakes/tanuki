@@ -7,7 +7,8 @@ BODY { width: 960px; margin: 0 auto; }
 A { text-decoration: none; font-weight: bold; }
 A:hover { text-decoration: underline; }
 
-.card { background-color: #FFF; padding: 8px; margin: 8px; border-right: solid #040; border-right-width: 4px; border-bottom: solid #040; border-bottom-width: 4px; text-align: center; overflow: auto; clear: both; }
+.card { padding: 8px; margin: 8px; text-align: center; overflow: auto; clear: both; background-color: #FFF; border-right: solid #040; border-right-width: 4px; border-bottom: solid #040; border-bottom-width: 4px; }
+.subcard { background-color: #EEE; border-right: solid #888; border-right-width: 2px; border-bottom: solid #888; border-bottom-width: 2px; }
 
 .slogan { font-style: italic; }
 
@@ -33,7 +34,6 @@ A:hover { text-decoration: underline; }
 .body IMG { float: left; margin: 4px; }
 .body SPAN { white-space: pre-wrap; word-wrap: break-word; _white-space: pre; }
 
-.reply { background-color: #EEE; border-right: solid #888; border-right-width: 2px; border-bottom: solid #888; border-bottom-width: 2px; }
 .reply-preview { width: 300px; }
 
 .credits SPAN { font-weight: bold; }

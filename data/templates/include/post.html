@@ -14,7 +14,7 @@
 		{{if ne .Body ""}}<SPAN>{{.Body}}</SPAN>{{end}}
 	</DIV>
 	{{range .Replies}}
-	<DIV class="card post reply" id="post{{.ID}}">
+	<DIV class="card subcard post" id="post{{.ID}}">
 		<DIV class="details">
 			<DIV class="commands">
 				<A href="/admin/delete/{{.ID}}" class="admin">Delete</A>
