@@ -11,5 +11,5 @@
 </DIV>
 <DIV class="body">
 	{{if .Image}}<A href="/{{.FullPath}}" target="_blank"><IMG src="/{{.ThumbPath}}" alt=""></A>{{end}}
-	{{if ne .Body ""}}<SPAN>{{.Body}}</SPAN>{{end}}
+	{{with .Body}}<SPAN>{{.}}</SPAN>{{end}}
 </DIV>{{end}}
