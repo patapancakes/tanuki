@@ -23,19 +23,21 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"sync"
 
 	. "github.com/patapancakes/tanuki/config"
 )
 
 type PostJSON struct {
 	file string
+	mtx  sync.RWMutex
 }
 
-func NewPostJSON(file string) PostJSON {
-	return PostJSON{file: file}
+func NewPostJSON(file string) *PostJSON {
+	return &PostJSON{file: file}
 }
 
-func (p PostJSON) read() (PostData, error) {
+func (p *PostJSON) read() (PostData, error) {
 	f, err := os.Open(p.file)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -56,7 +58,7 @@ func (p PostJSON) read() (PostData, error) {
 	return posts, nil
 }
 
-func (p PostJSON) write(posts PostData) error {
+func (p *PostJSON) write(posts PostData) error {
 	f, err := os.OpenFile(p.file, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open log file: %s", err)
@@ -72,7 +74,10 @@ func (p PostJSON) write(posts PostData) error {
 	return nil
 }
 
-func (p PostJSON) GetAll() (PostData, error) {
+func (p *PostJSON) GetAll() (PostData, error) {
+	p.mtx.RLock()
+	defer p.mtx.RUnlock()
+
 	posts, err := p.read()
 	if err != nil {
 		return nil, err
@@ -102,7 +107,10 @@ func (p PostJSON) GetAll() (PostData, error) {
 	return posts, nil
 }
 
-func (p PostJSON) Get(id int) (Post, error) {
+func (p *PostJSON) Get(id int) (Post, error) {
+	p.mtx.RLock()
+	defer p.mtx.RUnlock()
+
 	posts, err := p.read()
 	if err != nil {
 		return Post{}, fmt.Errorf("failed to fetch posts: %s", err)
@@ -123,7 +131,10 @@ func (p PostJSON) Get(id int) (Post, error) {
 	return Post{}, ErrUnknownPost
 }
 
-func (p PostJSON) Add(post Post) (int, error) {
+func (p *PostJSON) Add(post Post) (int, error) {
+	p.mtx.Lock()
+	defer p.mtx.Unlock()
+
 	posts, err := p.read()
 	if err != nil {
 		return 0, fmt.Errorf("failed to fetch posts: %s", err)
@@ -166,7 +177,10 @@ func (p PostJSON) Add(post Post) (int, error) {
 	return post.ID, nil
 }
 
-func (p PostJSON) Delete(id int) error {
+func (p *PostJSON) Delete(id int) error {
+	p.mtx.Lock()
+	defer p.mtx.Unlock()
+
 	posts, err := p.read()
 	if err != nil {
 		return fmt.Errorf("failed to fetch posts: %s", err)
@@ -223,7 +237,10 @@ func (p PostJSON) Delete(id int) error {
 	return nil
 }
 
-func (p PostJSON) DeletePoster(id string) error {
+func (p *PostJSON) DeletePoster(id string) error {
+	p.mtx.Lock()
+	defer p.mtx.Unlock()
+
 	posts, err := p.read()
 	if err != nil {
 		return fmt.Errorf("failed to fetch posts: %s", err)

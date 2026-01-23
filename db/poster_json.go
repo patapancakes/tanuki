@@ -22,17 +22,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sync"
 )
 
 type PosterJSON struct {
 	file string
+	mtx  sync.RWMutex
 }
 
-func NewPosterJSON(file string) PosterJSON {
-	return PosterJSON{file: file}
+func NewPosterJSON(file string) *PosterJSON {
+	return &PosterJSON{file: file}
 }
 
-func (p PosterJSON) read() (PosterData, error) {
+func (p *PosterJSON) read() (PosterData, error) {
 	f, err := os.Open(p.file)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -53,7 +55,7 @@ func (p PosterJSON) read() (PosterData, error) {
 	return posters, nil
 }
 
-func (p PosterJSON) write(posters PosterData) error {
+func (p *PosterJSON) write(posters PosterData) error {
 	f, err := os.OpenFile(p.file, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open posters file: %s", err)
@@ -69,7 +71,10 @@ func (p PosterJSON) write(posters PosterData) error {
 	return nil
 }
 
-func (p PosterJSON) Get(id string) (Poster, error) {
+func (p *PosterJSON) Get(id string) (Poster, error) {
+	p.mtx.RLock()
+	defer p.mtx.RUnlock()
+
 	posters, err := p.read()
 	if err != nil {
 		return Poster{}, fmt.Errorf("failed to fetch posters: %s", err)
@@ -83,7 +88,10 @@ func (p PosterJSON) Get(id string) (Poster, error) {
 	return poster, nil
 }
 
-func (p PosterJSON) Add(id string, poster Poster) error {
+func (p *PosterJSON) Add(id string, poster Poster) error {
+	p.mtx.Lock()
+	defer p.mtx.Unlock()
+
 	posters, err := p.read()
 	if err != nil {
 		return fmt.Errorf("failed to fetch posters: %s", err)
