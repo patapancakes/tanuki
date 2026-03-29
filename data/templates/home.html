@@ -5,7 +5,7 @@
 		<META http-equiv="content-type" content="text/html; charset=utf-8">
 		<META http-equiv="x-ua-compatible" content="ie=edge">
 		<META name="viewport" content="width=device-width, initial-scale=1">
-		{{if gt (len config.SiteSlogans) 0}}<META name="description" content="{{index config.SiteSlogans (rand (len config.SiteSlogans))}}">{{end}}
+		{{with config.SiteSlogans}}<META name="description" content="{{index . (rand (len .))}}">{{end}}
 		<LINK rel="icon" type="image/x-icon" href="/data/static/icon.ico">
 		<LINK rel="stylesheet" href="/data/static/style.css" type="text/css">
 		<STYLE type="text/css">{{if not .Admin}}.admin{{else}}.noadmin{{end}} { display: none; }</STYLE>

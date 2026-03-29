@@ -7,5 +7,5 @@
 		</DIV>
 	</DIV>
 	<H1>{{config.SiteName}}</H1>
-	{{if gt (len config.SiteSlogans) 0}}<SPAN class="slogan">{{index config.SiteSlogans (rand (len config.SiteSlogans))}}</SPAN>{{end}}
+	{{with config.SiteSlogans}}<SPAN class="slogan">{{index . (rand (len .))}}</SPAN>{{end}}
 </DIV>{{end}}
