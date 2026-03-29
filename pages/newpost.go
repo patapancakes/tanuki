@@ -82,7 +82,6 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 
 	post.Poster = identity
 	if admin {
-		fmt.Println("is admin")
 		post.Poster = "admin"
 	}
 
