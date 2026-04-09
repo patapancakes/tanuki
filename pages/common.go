@@ -19,6 +19,7 @@
 package pages
 
 import (
+	"embed"
 	"html/template"
 	"io/fs"
 	"math/rand/v2"
@@ -43,51 +44,59 @@ var (
 
 	posts   db.PostDB
 	posters db.PosterDB
+
+	//go:embed templates
+	templates      embed.FS
+	TemplatesFS, _ = fs.Sub(templates, "templates")
+
+	//go:embed assets
+	assets      embed.FS
+	AssetsFS, _ = fs.Sub(assets, "assets")
 )
 
-func Init(fs fs.FS) error {
+func Init() error {
 	var err error
 
 	// home
-	homeT, err = template.New("home.html").Funcs(funcs).ParseFS(fs, "data/templates/home.html")
+	homeT, err = template.New("home.html").Funcs(funcs).ParseFS(TemplatesFS, "home.html")
 	if err != nil {
 		return err
 	}
 
-	homeT, err = homeT.ParseFS(fs, "data/templates/include/*.html")
+	homeT, err = homeT.ParseFS(TemplatesFS, "include/*.html")
 	if err != nil {
 		return err
 	}
 
 	// thread
-	threadT, err = template.New("thread.html").Funcs(funcs).ParseFS(fs, "data/templates/thread.html")
+	threadT, err = template.New("thread.html").Funcs(funcs).ParseFS(TemplatesFS, "thread.html")
 	if err != nil {
 		return err
 	}
 
-	threadT, err = threadT.ParseFS(fs, "data/templates/include/*.html")
+	threadT, err = threadT.ParseFS(TemplatesFS, "include/*.html")
 	if err != nil {
 		return err
 	}
 
 	// error
-	errorT, err = template.New("error.html").Funcs(funcs).ParseFS(fs, "data/templates/error.html")
+	errorT, err = template.New("error.html").Funcs(funcs).ParseFS(TemplatesFS, "error.html")
 	if err != nil {
 		return err
 	}
 
-	errorT, err = errorT.ParseFS(fs, "data/templates/include/*.html")
+	errorT, err = errorT.ParseFS(TemplatesFS, "include/*.html")
 	if err != nil {
 		return err
 	}
 
 	// admin
-	adminT, err = template.New("admin.html").Funcs(funcs).ParseFS(fs, "data/templates/admin.html")
+	adminT, err = template.New("admin.html").Funcs(funcs).ParseFS(TemplatesFS, "admin.html")
 	if err != nil {
 		return err
 	}
 
-	adminT, err = adminT.ParseFS(fs, "data/templates/include/*.html")
+	adminT, err = adminT.ParseFS(TemplatesFS, "include/*.html")
 	if err != nil {
 		return err
 	}

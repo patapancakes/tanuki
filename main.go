@@ -19,7 +19,6 @@
 package main
 
 import (
-	"embed"
 	"flag"
 	"fmt"
 	"log"
@@ -29,12 +28,6 @@ import (
 	. "github.com/patapancakes/tanuki/config"
 	"github.com/patapancakes/tanuki/pages"
 )
-
-//go:embed data/templates
-var templates embed.FS
-
-//go:embed data/static
-var static embed.FS
 
 func main() {
 	log.Printf("Tanuki BBS by Pancakes (pancakes@mooglepowered.com)\n")
@@ -49,7 +42,7 @@ func main() {
 	}
 
 	// templates
-	err = pages.Init(templates)
+	err = pages.Init()
 	if err != nil {
 		log.Fatalf("failed to create page templates: %s", err)
 	}
@@ -59,9 +52,9 @@ func main() {
 	os.MkdirAll("data/full", 0755)
 
 	// files
-	http.Handle("GET /data/static/", http.FileServer(http.FS(static)))
-	http.Handle("GET /data/thumb/", http.StripPrefix("/data/thumb/", http.FileServer(http.Dir("data/thumb"))))
-	http.Handle("GET /data/full/", http.StripPrefix("/data/full/", http.FileServer(http.Dir("data/full"))))
+	http.Handle("GET /assets/", http.StripPrefix("/assets/", http.FileServerFS(pages.AssetsFS)))
+	http.Handle("GET /thumb/", http.StripPrefix("/thumb/", http.FileServer(http.Dir("data/thumb"))))
+	http.Handle("GET /full/", http.StripPrefix("/full/", http.FileServer(http.Dir("data/full"))))
 
 	// routes
 	http.HandleFunc("GET /", pages.Home)

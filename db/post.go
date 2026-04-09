@@ -26,6 +26,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"os"
+	"path"
 	"time"
 
 	. "github.com/patapancakes/tanuki/config"
@@ -56,20 +57,20 @@ func (p Post) IsAdmin() bool {
 }
 
 func (p Post) ThumbPath() string {
-	return fmt.Sprintf("data/thumb/%d.jpg", p.Posted.UnixMilli())
+	return fmt.Sprintf("thumb/%d.jpg", p.Posted.UnixMilli())
 }
 
 func (p Post) FullPath() string {
-	return fmt.Sprintf("data/full/%d.png", p.Posted.UnixMilli())
+	return fmt.Sprintf("full/%d.png", p.Posted.UnixMilli())
 }
 
 func (p Post) DeleteImage() error {
-	err := os.Remove(p.FullPath())
+	err := os.Remove(path.Join("data", p.FullPath()))
 	if err != nil {
 		return fmt.Errorf("failed to delete full image: %s", err)
 	}
 
-	err = os.Remove(p.ThumbPath())
+	err = os.Remove(path.Join("data", p.ThumbPath()))
 	if err != nil {
 		return fmt.Errorf("failed to delete thumbnail image: %s", err)
 	}
@@ -79,7 +80,7 @@ func (p Post) DeleteImage() error {
 
 func (p Post) WriteImage(img image.Image) error {
 	// full image
-	of, err := os.OpenFile(p.FullPath(), os.O_CREATE|os.O_WRONLY, 0644)
+	of, err := os.OpenFile(path.Join("data", p.FullPath()), os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
@@ -102,7 +103,7 @@ func (p Post) WriteImage(img image.Image) error {
 	draw.Draw(oimg, oimg.Bounds(), image.NewUniform(color.White), image.Point{}, draw.Src)
 	draw.BiLinear.Scale(oimg, oimg.Bounds(), img, img.Bounds(), draw.Over, nil)
 
-	of, err = os.OpenFile(p.ThumbPath(), os.O_CREATE|os.O_WRONLY, 0644)
+	of, err = os.OpenFile(path.Join("path", p.ThumbPath()), os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}

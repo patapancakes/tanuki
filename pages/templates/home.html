@@ -6,8 +6,8 @@
 		<META http-equiv="x-ua-compatible" content="ie=edge">
 		<META name="viewport" content="width=device-width, initial-scale=1">
 		{{with config.SiteSlogans}}<META name="description" content="{{index . (rand (len .))}}">{{end}}
-		<LINK rel="icon" type="image/x-icon" href="/data/static/icon.ico">
-		<LINK rel="stylesheet" href="/data/static/style.css" type="text/css">
+		<LINK rel="icon" type="image/x-icon" href="/assets/icon.ico">
+		<LINK rel="stylesheet" href="/assets/style.css" type="text/css">
 		<STYLE type="text/css">{{if not .Admin}}.admin{{else}}.noadmin{{end}} { display: none; }</STYLE>
 	</HEAD>
 	<BODY>
