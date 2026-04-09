@@ -81,6 +81,11 @@ func main() {
 
 func cache(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "" {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
 		w.Header().Set("Cache-Control", "public, max-age=604800, immutable")
 		h.ServeHTTP(w, r)
 	}
