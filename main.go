@@ -52,11 +52,10 @@ func main() {
 	os.MkdirAll("data/full", 0755)
 
 	// files
-	http.Handle("GET /assets/", http.StripPrefix("/assets/", http.FileServerFS(pages.AssetsFS)))
-	http.Handle("GET /thumb/", http.StripPrefix("/thumb/", http.FileServer(http.Dir("data/thumb"))))
-	http.Handle("GET /full/", http.StripPrefix("/full/", http.FileServer(http.Dir("data/full"))))
+	http.Handle("GET /assets/", cache(http.StripPrefix("/assets/", http.FileServerFS(pages.AssetsFS))))
+	http.Handle("GET /thumb/", cache(http.StripPrefix("/thumb/", http.FileServer(http.Dir("data/thumb")))))
+	http.Handle("GET /full/", cache(http.StripPrefix("/full/", http.FileServer(http.Dir("data/full")))))
 
-	// routes
 	http.HandleFunc("GET /", pages.Home)
 	http.HandleFunc("GET /{page}", pages.Home)
 
@@ -77,5 +76,12 @@ func main() {
 	err = http.ListenAndServe(fmt.Sprintf(":%d", Config.Port), nil)
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func cache(h http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=604800, immutable")
+		h.ServeHTTP(w, r)
 	}
 }
