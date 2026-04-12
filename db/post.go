@@ -103,7 +103,7 @@ func (p Post) WriteImage(img image.Image) error {
 	draw.Draw(oimg, oimg.Bounds(), image.NewUniform(color.White), image.Point{}, draw.Src)
 	draw.BiLinear.Scale(oimg, oimg.Bounds(), img, img.Bounds(), draw.Over, nil)
 
-	of, err = os.OpenFile(path.Join("path", p.ThumbPath()), os.O_CREATE|os.O_WRONLY, 0644)
+	of, err = os.OpenFile(path.Join("data", p.ThumbPath()), os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
