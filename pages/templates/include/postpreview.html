@@ -1,8 +1,8 @@
 {{define "postpreview"}}<DIV class="card post post-preview" id="post{{.ID}}">
 	{{template "postbase" .}}
 	{{if gt (len .Replies) 0}}<TABLE>
-		<TR>{{$replies := .Replies}}{{if gt (len .Replies) 2}}{{$replies = slice $replies (max 0 (sub (len $replies) 2))}}{{end}}
-			{{if gt (len .Replies) 2}}<TD><SPAN style="font-weight: bold;">...</SPAN></TD>{{end}}
+		<TR>{{$replies := .Replies}}{{if gt (len .Replies) 2}}{{$replies = slice $replies (max 0 (sub (len $replies) 3))}}{{end}}
+			{{if gt (len .Replies) 3}}<TD><SPAN style="font-weight: bold;">...</SPAN></TD>{{end}}
 			{{range $replies}}<TD>
 				<DIV class="card subcard post reply-preview" id="post{{.ID}}">
 					{{template "postbase" .}}

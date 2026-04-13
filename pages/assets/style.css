@@ -35,7 +35,7 @@ A:hover { text-decoration: underline; }
 .body IMG { float: left; margin: 4px; }
 .body SPAN { white-space: pre-wrap; word-wrap: break-word; _white-space: pre; }
 
-.reply-preview { width: 300px; }
+.reply-preview { width: 250px; }
 
 .credits SPAN { font-weight: bold; }
 
