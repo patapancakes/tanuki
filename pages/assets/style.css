@@ -10,7 +10,9 @@ A:hover { text-decoration: underline; }
 
 .slogan { font-style: italic; }
 
-#postform TABLE { text-align: left; font-weight: bold; margin: 0 auto; }
+#postform TABLE { margin: 0 auto; }
+#postform TD { text-align: left; }
+#postform LABEL { font-weight: bolder; }
 #postform INPUT, #postform TEXTAREA { width: 400px; box-sizing: border-box; }
 @media (max-width: 960px) { #postform INPUT, #postform TEXTAREA { width: 100%; } }
 #postform #comment { resize: vertical; }
