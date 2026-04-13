@@ -229,7 +229,11 @@ func AdminUnbanID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ids := r.Form["id"]
+	ids, ok := r.Form["id"]
+	if !ok {
+		writeError(w, r, "no ids specified", http.StatusBadRequest)
+		return
+	}
 
 	for _, id := range ids {
 		poster, err := posters.Get(id)
