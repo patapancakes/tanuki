@@ -1,6 +1,4 @@
-@font-face { font-family: "KosugiMaru"; src: url("KosugiMaru-Regular.ttf"); }
-
-HTML { font-family: 'MS UI Gothic', 'KosugiMaru', sans-serif; background-image: url("bg.gif"); background-color: #4A8B4A; }
+HTML { font-family: 'MS PGothic', 'Verdana', sans-serif; background-image: url("bg.gif"); background-color: #4A8B4A; }
 BODY { width: 960px; margin: 0 auto; }
 @media (max-width: 960px) { BODY { width: 100%; } }
 
