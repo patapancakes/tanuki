@@ -39,14 +39,18 @@ func Thread(w http.ResponseWriter, r *http.Request) {
 	var td ThreadData
 
 	if Config.AdminPassword != "" {
-		adminpw, err := r.Cookie("adminpw")
+		err := checkAuth(r)
 		if err != nil {
+			if err == errInvalidSession {
+				http.Redirect(w, r, "/admin/logout", http.StatusSeeOther)
+				return
+			}
 			if err != http.ErrNoCookie {
-				writeError(w, r, fmt.Sprintf("failed to read admin password cookie: %s", err), http.StatusBadRequest)
+				writeError(w, r, fmt.Sprintf("authentication failed: %s", err), http.StatusUnauthorized)
 				return
 			}
 		} else {
-			td.Admin = adminpw.Value == Config.AdminPassword
+			td.Admin = true
 		}
 	}
 

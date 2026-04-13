@@ -27,7 +27,7 @@ var ErrUnknownPoster = errors.New("unknown poster")
 
 type Poster struct {
 	LastPost  time.Time `json:"lastPost,omitzero"`
-	LastAdmin time.Time `json:"lastAdmin,omitzero"`
+	LastLogin time.Time `json:"lastLogin,omitzero"`
 	Banned    bool      `json:"banned,omitempty"`
 }
 

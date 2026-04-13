@@ -22,57 +22,14 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"time"
-
-	. "github.com/patapancakes/tanuki/config"
-	. "github.com/patapancakes/tanuki/db"
 )
 
 var bansT *template.Template
 
 func Bans(w http.ResponseWriter, r *http.Request) {
-	if Config.AdminPassword == "" {
-		writeError(w, r, "admin password not set", http.StatusForbidden)
-		return
-	}
-
-	// rate limiting
-	identity, err := deriveIdentity(r)
+	err := checkAuth(r)
 	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to derive identity: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	poster, err := posters.Get(identity)
-	if err != nil && err != ErrUnknownPoster {
-		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
-		return
-	}
-	if poster.Banned {
-		writeError(w, r, "you are banned", http.StatusForbidden)
-		return
-	}
-	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
-		writeError(w, r, "you are being rate limited", http.StatusTooManyRequests)
-		return
-	}
-
-	poster.LastAdmin = time.Now()
-
-	err = posters.Add(identity, poster)
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	// check password
-	adminpw, err := r.Cookie("adminpw")
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to read admin password cookie: %s", err), http.StatusBadRequest)
-		return
-	}
-	if adminpw.Value != Config.AdminPassword {
-		writeError(w, r, "incorrect password", http.StatusUnauthorized)
+		writeError(w, r, fmt.Sprintf("authentication failed: %s", err), http.StatusUnauthorized)
 		return
 	}
 

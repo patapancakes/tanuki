@@ -19,16 +19,56 @@
 package pages
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	. "github.com/patapancakes/tanuki/config"
 	. "github.com/patapancakes/tanuki/db"
 )
 
 var adminT *template.Template
+
+var (
+	errInvalidSession        = errors.New("invalid session")
+	errInvalidSessionSubject = errors.New("invalid session subject")
+)
+
+func checkAuth(r *http.Request) error {
+	session, err := r.Cookie("session")
+	if err != nil {
+		return err
+	}
+
+	token, err := jwt.ParseWithClaims(session.Value, jwt.MapClaims{}, func(token *jwt.Token) (any, error) {
+		return os.ReadFile("data/session.key")
+	})
+	if err != nil {
+		return err
+	}
+	if !token.Valid {
+		return errInvalidSession
+	}
+
+	identity, err := deriveIdentity(r)
+	if err != nil {
+		return err
+	}
+
+	subject, err := token.Claims.GetSubject()
+	if err != nil {
+		return err
+	}
+	if subject != identity {
+		return errInvalidSessionSubject
+	}
+
+	return nil
+}
 
 func Admin(w http.ResponseWriter, r *http.Request) {
 	if Config.AdminPassword == "" {
@@ -65,12 +105,12 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, "you are banned", http.StatusForbidden)
 		return
 	}
-	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
+	if poster.LastLogin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
 		writeError(w, r, "you are logging in too quickly", http.StatusTooManyRequests)
 		return
 	}
 
-	poster.LastAdmin = time.Now()
+	poster.LastLogin = time.Now()
 
 	err = posters.Add(identity, poster)
 	if err != nil {
@@ -84,9 +124,25 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	key, err := os.ReadFile("data/session.key")
+	if err != nil {
+		writeError(w, r, fmt.Sprintf("failed to read session signing key: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		Subject:   identity,
+	}).SignedString(key)
+	if err != nil {
+		writeError(w, r, fmt.Sprintf("failed to sign token: %s", err), http.StatusInternalServerError)
+		return
+	}
+
 	http.SetCookie(w, &http.Cookie{
-		Name:     "adminpw",
-		Value:    r.FormValue("password"),
+		Name:     "session",
+		Value:    token,
 		Path:     "/",
 		MaxAge:   60 * 60 * 24, // 1 day
 		HttpOnly: true,
@@ -98,7 +154,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 
 func AdminLogout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     "adminpw",
+		Name:     "session",
 		Path:     "/",
 		MaxAge:   -1, // invalidate
 		HttpOnly: true,
@@ -109,48 +165,9 @@ func AdminLogout(w http.ResponseWriter, r *http.Request) {
 }
 
 func AdminDelete(w http.ResponseWriter, r *http.Request) {
-	if Config.AdminPassword == "" {
-		writeError(w, r, "admin password not set", http.StatusForbidden)
-		return
-	}
-
-	// rate limiting
-	identity, err := deriveIdentity(r)
+	err := checkAuth(r)
 	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to derive identity: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	poster, err := posters.Get(identity)
-	if err != nil && err != ErrUnknownPoster {
-		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
-		return
-	}
-	if poster.Banned {
-		writeError(w, r, "you are banned", http.StatusForbidden)
-		return
-	}
-	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
-		writeError(w, r, "you are being rate limited", http.StatusTooManyRequests)
-		return
-	}
-
-	poster.LastAdmin = time.Now()
-
-	err = posters.Add(identity, poster)
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	// check password
-	adminpw, err := r.Cookie("adminpw")
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to read admin password cookie: %s", err), http.StatusBadRequest)
-		return
-	}
-	if adminpw.Value != Config.AdminPassword {
-		writeError(w, r, "incorrect password", http.StatusUnauthorized)
+		writeError(w, r, fmt.Sprintf("authentication failed: %s", err), http.StatusUnauthorized)
 		return
 	}
 
@@ -164,48 +181,9 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func AdminBan(w http.ResponseWriter, r *http.Request) {
-	if Config.AdminPassword == "" {
-		writeError(w, r, "admin password not set", http.StatusForbidden)
-		return
-	}
-
-	// rate limiting
-	identity, err := deriveIdentity(r)
+	err := checkAuth(r)
 	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to derive identity: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	poster, err := posters.Get(identity)
-	if err != nil && err != ErrUnknownPoster {
-		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
-		return
-	}
-	if poster.Banned {
-		writeError(w, r, "you are banned", http.StatusForbidden)
-		return
-	}
-	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
-		writeError(w, r, "you are being rate limited", http.StatusTooManyRequests)
-		return
-	}
-
-	poster.LastAdmin = time.Now()
-
-	err = posters.Add(identity, poster)
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	// check password
-	adminpw, err := r.Cookie("adminpw")
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to read admin password cookie: %s", err), http.StatusBadRequest)
-		return
-	}
-	if adminpw.Value != Config.AdminPassword {
-		writeError(w, r, "incorrect password", http.StatusUnauthorized)
+		writeError(w, r, fmt.Sprintf("authentication failed: %s", err), http.StatusUnauthorized)
 		return
 	}
 
@@ -215,7 +193,7 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poster, err = posters.Get(post.Poster)
+	poster, err := posters.Get(post.Poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
@@ -239,48 +217,9 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 }
 
 func AdminUnbanID(w http.ResponseWriter, r *http.Request) {
-	if Config.AdminPassword == "" {
-		writeError(w, r, "admin password not set", http.StatusForbidden)
-		return
-	}
-
-	// rate limiting
-	identity, err := deriveIdentity(r)
+	err := checkAuth(r)
 	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to derive identity: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	poster, err := posters.Get(identity)
-	if err != nil && err != ErrUnknownPoster {
-		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
-		return
-	}
-	if poster.Banned {
-		writeError(w, r, "you are banned", http.StatusForbidden)
-		return
-	}
-	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
-		writeError(w, r, "you are being rate limited", http.StatusTooManyRequests)
-		return
-	}
-
-	poster.LastAdmin = time.Now()
-
-	err = posters.Add(identity, poster)
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	// check password
-	adminpw, err := r.Cookie("adminpw")
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to read admin password cookie: %s", err), http.StatusBadRequest)
-		return
-	}
-	if adminpw.Value != Config.AdminPassword {
-		writeError(w, r, "incorrect password", http.StatusUnauthorized)
+		writeError(w, r, fmt.Sprintf("authentication failed: %s", err), http.StatusUnauthorized)
 		return
 	}
 

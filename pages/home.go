@@ -45,14 +45,18 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	if Config.AdminPassword != "" {
-		adminpw, err := r.Cookie("adminpw")
+		err := checkAuth(r)
 		if err != nil {
+			if err == errInvalidSession {
+				http.Redirect(w, r, "/admin/logout", http.StatusSeeOther)
+				return
+			}
 			if err != http.ErrNoCookie {
-				writeError(w, r, fmt.Sprintf("failed to read admin password cookie: %s", err), http.StatusBadRequest)
+				writeError(w, r, fmt.Sprintf("authentication failed: %s", err), http.StatusUnauthorized)
 				return
 			}
 		} else {
-			hd.Admin = adminpw.Value == Config.AdminPassword
+			hd.Admin = true
 		}
 	}
 
