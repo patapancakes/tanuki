@@ -72,7 +72,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, "you are banned", http.StatusForbidden)
 		return
 	}
-	if poster.LastPost.Add(time.Second * time.Duration(Config.PostCooldown)).After(time.Now().UTC()) {
+	if poster.LastPost.Add(time.Second * time.Duration(Config.PostCooldown)).After(time.Now()) {
 		writeError(w, r, "you are posting too quickly", http.StatusTooManyRequests)
 		return
 	}
@@ -115,7 +115,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	post.Posted = time.Now().UTC()
+	post.Posted = time.Now()
 
 	// handle image
 	f, _, err := r.FormFile("image")

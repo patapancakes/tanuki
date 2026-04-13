@@ -66,12 +66,12 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, "you are banned", http.StatusForbidden)
 		return
 	}
-	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now().UTC()) {
+	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
 		writeError(w, r, "you are logging in too quickly", http.StatusTooManyRequests)
 		return
 	}
 
-	poster.LastAdmin = time.Now().UTC()
+	poster.LastAdmin = time.Now()
 
 	err = posters.Add(identity, poster)
 	if err != nil {
@@ -131,12 +131,12 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, "you are banned", http.StatusForbidden)
 		return
 	}
-	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now().UTC()) {
+	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
 		writeError(w, r, "you are being rate limited", http.StatusTooManyRequests)
 		return
 	}
 
-	poster.LastAdmin = time.Now().UTC()
+	poster.LastAdmin = time.Now()
 
 	err = posters.Add(identity, poster)
 	if err != nil {
@@ -192,12 +192,12 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, "you are banned", http.StatusForbidden)
 		return
 	}
-	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now().UTC()) {
+	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
 		writeError(w, r, "you are being rate limited", http.StatusTooManyRequests)
 		return
 	}
 
-	poster.LastAdmin = time.Now().UTC()
+	poster.LastAdmin = time.Now()
 
 	err = posters.Add(identity, poster)
 	if err != nil {
