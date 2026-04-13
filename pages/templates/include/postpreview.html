@@ -1,10 +1,10 @@
-{{define "postpreview"}}<DIV class="card post post-preview" id="post{{.ID}}">
+{{define "postpreview"}}<DIV class="card post post-preview" id="post_{{.ID}}">
 	{{template "postbase" .}}
 	{{with .Replies}}<TABLE>
 		<TR>{{$replies := .}}{{if gt (len .) 2}}{{$replies = slice $replies (max 0 (sub (len $replies) 3))}}{{end}}
 			{{if gt (len .) 3}}<TD><SPAN style="font-weight: bold;">...</SPAN></TD>{{end}}
 			{{range $replies}}<TD>
-				<DIV class="card subcard post reply-preview" id="post{{.ID}}">
+				<DIV class="card subcard post reply-preview" id="post_{{.ID}}">
 					{{template "postbase" .}}
 				</DIV>
 			</TD>{{end}}

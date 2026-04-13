@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"image"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -103,18 +102,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.PostFormValue("parent") != "" {
-		post.Parent, err = strconv.Atoi(r.PostFormValue("parent"))
-		if err != nil {
-			writeError(w, r, fmt.Sprintf("failed to parse parent value: %s", err), http.StatusBadRequest)
-			return
-		}
-		if post.Parent < 0 {
-			writeError(w, r, "invalid parent value", http.StatusBadRequest)
-			return
-		}
-	}
-
+	post.Parent = r.PostFormValue("parent")
 	post.Posted = time.Now()
 
 	// handle image
@@ -151,7 +139,8 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	post.ID, err = posts.Add(post)
+	var id string
+	id, err = posts.Add(post)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to insert post: %s", err), http.StatusInternalServerError)
 		return
@@ -159,8 +148,8 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 
 	redirect := post.Parent
 	if post.IsThread() {
-		redirect = post.ID
+		redirect = id
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/thread/%d", redirect), http.StatusFound)
+	http.Redirect(w, r, fmt.Sprintf("/thread/%s", redirect), http.StatusFound)
 }

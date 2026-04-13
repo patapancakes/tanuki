@@ -1,12 +1,12 @@
 {{define "postform"}}<DIV class="card" id="postform">
-	<H2>New {{if eq . 0}}Topic{{else}}Reply{{end}}</H2>
+	<H2>New {{if eq . ""}}Topic{{else}}Reply{{end}}</H2>
 	<FORM action="/newpost" method="post" enctype="multipart/form-data">
 		<TABLE>
 			<TR>
 				<TD><LABEL for="name">Name</LABEL></TD>
 				<TD><INPUT type="text" name="name" id="name" maxlength="{{config.MaxNameLength}}"></TD>
 			</TR>
-			{{if eq . 0}}<TR>
+			{{if eq . ""}}<TR>
 				<TD><LABEL for="subject">Subject</LABEL></TD>
 				<TD><INPUT type="text" name="subject" id="subject" maxlength="{{config.MaxSubjectLength}}"></TD>
 			</TR>{{end}}

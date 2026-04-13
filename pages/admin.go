@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"strconv"
 	"time"
 
 	. "github.com/patapancakes/tanuki/config"
@@ -155,13 +154,7 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to parse id: %s", err), http.StatusBadRequest)
-		return
-	}
-
-	err = posts.Delete(id)
+	err = posts.Delete(r.PathValue("id"))
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to delete post: %s", err), http.StatusInternalServerError)
 		return
@@ -216,13 +209,7 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to parse id: %s", err), http.StatusBadRequest)
-		return
-	}
-
-	post, err := posts.Get(id)
+	post, err := posts.Get(r.PathValue("id"))
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to fetch post: %s", err), http.StatusInternalServerError)
 		return

@@ -19,6 +19,8 @@
 package db
 
 import (
+	"encoding/base64"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"image"
@@ -37,8 +39,7 @@ import (
 var ErrUnknownPost = errors.New("unknown post")
 
 type Post struct {
-	ID      int       `json:"id,omitempty"`
-	Parent  int       `json:"parent,omitempty"`
+	Parent  string    `json:"parent,omitempty"`
 	Name    string    `json:"name,omitempty"`
 	Subject string    `json:"subject,omitempty"`
 	Body    string    `json:"body,omitempty"`
@@ -48,8 +49,19 @@ type Post struct {
 	Replies PostData  `json:"replies,omitempty"`
 }
 
+func (p Post) ID() string {
+	if p.Posted.IsZero() {
+		return ""
+	}
+
+	b := make([]byte, 8)
+	binary.LittleEndian.PutUint64(b, uint64(p.Posted.UnixMilli()))
+
+	return base64.RawURLEncoding.EncodeToString(b)
+}
+
 func (p Post) IsThread() bool {
-	return p.Parent == 0
+	return p.Parent == ""
 }
 
 func (p Post) IsAdmin() bool {
@@ -57,11 +69,11 @@ func (p Post) IsAdmin() bool {
 }
 
 func (p Post) ThumbPath() string {
-	return fmt.Sprintf("thumb/%d.jpg", p.Posted.UnixMilli())
+	return fmt.Sprintf("thumb/%s.jpg", p.ID())
 }
 
 func (p Post) FullPath() string {
-	return fmt.Sprintf("full/%d.png", p.Posted.UnixMilli())
+	return fmt.Sprintf("full/%s.png", p.ID())
 }
 
 func (p Post) DeleteImage() error {
@@ -122,8 +134,8 @@ type PostData []Post
 
 type PostDB interface {
 	GetAll() (PostData, error)
-	Get(id int) (Post, error)
-	Add(post Post) (int, error)
-	Delete(id int) error
+	Get(id string) (Post, error)
+	Add(post Post) (string, error)
+	Delete(id string) error
 	DeletePoster(id string) error
 }

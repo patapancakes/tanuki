@@ -1,7 +1,7 @@
-{{define "post"}}<DIV class="card post" id="post{{.ID}}">
+{{define "post"}}<DIV class="card post" id="post_{{.ID}}">
 	{{template "postbase" .}}
 	{{range .Replies}}
-	<DIV class="card subcard post" id="post{{.ID}}">
+	<DIV class="card subcard post" id="post_{{.ID}}">
 		{{template "postbase" .}}
 	</DIV>
 	{{end}}

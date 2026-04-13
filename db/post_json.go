@@ -107,7 +107,7 @@ func (p *PostJSON) GetAll() (PostData, error) {
 	return posts, nil
 }
 
-func (p *PostJSON) Get(id int) (Post, error) {
+func (p *PostJSON) Get(id string) (Post, error) {
 	p.mtx.RLock()
 	defer p.mtx.RUnlock()
 
@@ -117,12 +117,12 @@ func (p *PostJSON) Get(id int) (Post, error) {
 	}
 
 	for _, p := range posts {
-		if p.ID == id {
+		if p.ID() == id {
 			return p, nil
 		}
 
 		for _, reply := range p.Replies {
-			if reply.ID == id {
+			if reply.ID() == id {
 				return reply, nil
 			}
 		}
@@ -131,31 +131,21 @@ func (p *PostJSON) Get(id int) (Post, error) {
 	return Post{}, ErrUnknownPost
 }
 
-func (p *PostJSON) Add(post Post) (int, error) {
+func (p *PostJSON) Add(post Post) (string, error) {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 
 	posts, err := p.read()
 	if err != nil {
-		return 0, fmt.Errorf("failed to fetch posts: %s", err)
+		return "", fmt.Errorf("failed to fetch posts: %s", err)
 	}
 
-	for _, thread := range posts {
-		post.ID = max(post.ID, thread.ID)
-
-		for _, reply := range thread.Replies {
-			post.ID = max(post.ID, reply.ID)
-		}
-	}
-
-	post.ID++
-
-	if post.Parent == 0 { // new thread
+	if post.Parent == "" { // new thread
 		posts = append(posts, post)
 	} else { // new reply
 		var found bool
 		for i, p := range posts {
-			if p.ID != post.Parent {
+			if p.ID() != post.Parent {
 				continue
 			}
 
@@ -165,19 +155,19 @@ func (p *PostJSON) Add(post Post) (int, error) {
 			break
 		}
 		if !found {
-			return 0, ErrUnknownPost
+			return "", ErrUnknownPost
 		}
 	}
 
 	err = p.write(posts)
 	if err != nil {
-		return 0, fmt.Errorf("failed to write posts: %s", err)
+		return "", fmt.Errorf("failed to write posts: %s", err)
 	}
 
-	return post.ID, nil
+	return post.ID(), nil
 }
 
-func (p *PostJSON) Delete(id int) error {
+func (p *PostJSON) Delete(id string) error {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 
@@ -189,7 +179,7 @@ func (p *PostJSON) Delete(id int) error {
 	var post Post
 	for i, thread := range posts {
 		for j, reply := range thread.Replies {
-			if reply.ID != id {
+			if reply.ID() != id {
 				continue
 			}
 
@@ -199,7 +189,7 @@ func (p *PostJSON) Delete(id int) error {
 			break
 		}
 
-		if thread.ID != id {
+		if thread.ID() != id {
 			continue
 		}
 
@@ -219,7 +209,7 @@ func (p *PostJSON) Delete(id int) error {
 		posts = slices.Delete(posts, i, i+1)
 		break
 	}
-	if post.ID == 0 {
+	if post.ID() == "" {
 		return ErrUnknownPost
 	}
 	if post.Image {
@@ -248,7 +238,7 @@ func (p *PostJSON) DeletePoster(id string) error {
 
 	for _, thread := range posts {
 		if thread.Poster == id {
-			err = p.Delete(thread.ID)
+			err = p.Delete(thread.ID())
 			if err != nil {
 				return fmt.Errorf("failed to delete post: %s", err)
 			}
@@ -261,7 +251,7 @@ func (p *PostJSON) DeletePoster(id string) error {
 				continue
 			}
 
-			err = p.Delete(reply.ID)
+			err = p.Delete(reply.ID())
 			if err != nil {
 				return fmt.Errorf("failed to delete post: %s", err)
 			}

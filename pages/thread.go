@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"strconv"
 
 	. "github.com/patapancakes/tanuki/config"
 	. "github.com/patapancakes/tanuki/db"
@@ -51,19 +50,14 @@ func Thread(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	id, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to parse id: %s", err), http.StatusBadRequest)
-		return
-	}
-
-	td.Post, err = posts.Get(id)
+	var err error
+	td.Post, err = posts.Get(r.PathValue("id"))
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to fetch post: %s", err), http.StatusInternalServerError)
 		return
 	}
 	if !td.Post.IsThread() {
-		http.Redirect(w, r, fmt.Sprintf("/thread/%d#post%d", td.Post.Parent, td.Post.ID), http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/thread/%s#post_%s", td.Post.Parent, td.Post.ID()), http.StatusSeeOther)
 		return
 	}
 
