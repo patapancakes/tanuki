@@ -24,6 +24,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	. "github.com/patapancakes/tanuki/config"
 	"github.com/patapancakes/tanuki/pages"
@@ -86,6 +87,7 @@ func cache(h http.Handler) http.HandlerFunc {
 			return
 		}
 
+		w.Header().Set("Expires", time.Now().UTC().Add(time.Hour*24*7).Format(time.RFC1123))
 		w.Header().Set("Cache-Control", "public, max-age=604800, immutable")
 		h.ServeHTTP(w, r)
 	}
