@@ -5,34 +5,36 @@ BODY { width: 960px; margin: 0 auto; }
 A { text-decoration: none; font-weight: bold; }
 A:hover { text-decoration: underline; }
 
+IMG { border: 0px; }
+
 .card { padding: 8px; margin: 8px; text-align: center; overflow: auto; clear: both; background-color: #FFF; border-right: solid #040; border-right-width: 4px; border-bottom: solid #040; border-bottom-width: 4px; }
 .subcard { background-color: #EEE; border-right: solid #888; border-right-width: 2px; border-bottom: solid #888; border-bottom-width: 2px; }
 
+.header H1 { clear: both; }
+
+.commands { float: right; }
+.commands A { margin-left: 8px; }
+
 .slogan { font-style: italic; }
 
-#postform TABLE { margin: 0 auto; }
-#postform TD { text-align: left; }
+#postform TABLE, #adminform TABLE { display: inline-block; }
+#postform TD, #adminform TD { text-align: left; }
 #postform LABEL { font-weight: bolder; }
 #postform INPUT, #postform TEXTAREA { width: 400px; box-sizing: border-box; }
 @media (max-width: 960px) { #postform INPUT, #postform TEXTAREA { width: 100%; } }
 #postform #comment { resize: vertical; }
 
-#adminform TABLE { text-align: left; display: inline; }
 #adminform #submit { width: 100%; }
 
 .post { text-align: left; }
-.post IMG { border: 0px; }
 
-.rank { font-weight: bold; color: gold; }
+.rank { font-weight: bold; color: goldenrod; }
 .name { font-weight: bold; color: #007F00; }
 .subject { font-weight: bolder; color: #F00; }
 .time { margin-left: 4px; color: #7F7F7F; }
 
-.commands { float: right; }
-.commands A { margin-left: 8px; }
-
-.body { padding: 4px; height: 100%; overflow: auto; }
-.body IMG { float: left; margin: 4px; }
+.body { display: inline-block; padding: 4px; overflow: auto; }
+.body IMG { float: left; margin: 4px; margin-bottom: 0px; }
 .body SPAN { white-space: pre-wrap; word-wrap: break-word; _white-space: pre; }
 
 .reply-preview { width: 250px; }

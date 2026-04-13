@@ -4,7 +4,7 @@
 		<A href="/admin/ban/{{.ID}}" class="admin">Ban</A>
 		{{if .IsThread}}<A href="/thread/{{.ID}}">Reply</A>{{end}}
 	</SPAN>
-	{{if .IsAdmin}}<SPAN class="rank" title="Rank">&starf;</SPAN>{{end}}
+	{{if .IsAdmin}}<IMG class="rank" alt="Admin" src="/assets/star.gif">{{end}}
 	<SPAN class="name" title="Name">{{.Name}}</SPAN>
 	{{if .IsThread}}<SPAN class="subject" title="Subject">{{.Subject}}</SPAN>{{end}}
 	<SPAN class="time" title="{{.Posted.Format "2006-01-02 15:04:05"}}">{{timeago .Posted}}</SPAN>
