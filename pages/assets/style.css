@@ -37,6 +37,7 @@ A:hover { text-decoration: underline; }
 
 .reply-preview { width: 300px; }
 
+.credits { text-align: left; }
 .credits SPAN { font-weight: bold; }
 
 .pagesel { float: left; margin: 0px; }
