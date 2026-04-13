@@ -188,14 +188,14 @@ func (p *PostJSON) Delete(id int) error {
 
 	var post Post
 	for i, thread := range posts {
-		for i, reply := range thread.Replies {
+		for j, reply := range thread.Replies {
 			if reply.ID != id {
 				continue
 			}
 
 			post = reply
 
-			posts[i].Replies = slices.Delete(thread.Replies, i, i+1)
+			posts[i].Replies = slices.Delete(thread.Replies, j, j+1)
 			break
 		}
 
