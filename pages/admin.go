@@ -44,7 +44,7 @@ func checkAuth(r *http.Request) error {
 		return err
 	}
 
-	token, err := jwt.ParseWithClaims(session.Value, jwt.MapClaims{}, func(token *jwt.Token) (any, error) {
+	token, err := jwt.Parse(session.Value, func(token *jwt.Token) (any, error) {
 		return os.ReadFile("data/session.key")
 	})
 	if err != nil {
