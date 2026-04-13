@@ -63,12 +63,15 @@ func main() {
 	http.HandleFunc("GET /thread/{id}", pages.Thread)
 
 	http.HandleFunc("GET /admin", pages.Admin)
+	http.HandleFunc("GET /admin/bans", pages.Bans)
 
 	http.HandleFunc("POST /admin/login", pages.AdminLogin)
 	http.HandleFunc("GET /admin/logout", pages.AdminLogout)
 
 	http.HandleFunc("GET /admin/delete/{id}", pages.AdminDelete)
 	http.HandleFunc("GET /admin/ban/{id}", pages.AdminBan)
+
+	http.HandleFunc("POST /admin/unbanid", pages.AdminUnbanID)
 
 	http.HandleFunc("POST /newpost", pages.NewPost)
 

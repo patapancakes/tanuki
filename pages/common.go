@@ -101,6 +101,17 @@ func Init() error {
 		return err
 	}
 
+	// bans
+	bansT, err = template.New("bans.html").Funcs(funcs).ParseFS(TemplatesFS, "bans.html")
+	if err != nil {
+		return err
+	}
+
+	bansT, err = bansT.ParseFS(TemplatesFS, "include/*.html")
+	if err != nil {
+		return err
+	}
+
 	// database
 	posts = db.NewPostJSON("data/posts.json")
 	posters = db.NewPosterJSON("data/posters.json")

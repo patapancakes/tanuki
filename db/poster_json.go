@@ -88,6 +88,27 @@ func (p *PosterJSON) Get(id string) (Poster, error) {
 	return poster, nil
 }
 
+func (p *PosterJSON) GetBanned() (PosterData, error) {
+	p.mtx.RLock()
+	defer p.mtx.RUnlock()
+
+	posters, err := p.read()
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch posters: %s", err)
+	}
+
+	banned := make(PosterData)
+	for id, p := range posters {
+		if !p.Banned {
+			continue
+		}
+
+		banned[id] = p
+	}
+
+	return banned, nil
+}
+
 func (p *PosterJSON) Add(id string, poster Poster) error {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()

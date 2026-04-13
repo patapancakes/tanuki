@@ -35,5 +35,6 @@ type PosterData map[string]Poster
 
 type PosterDB interface {
 	Get(id string) (Poster, error)
+	GetBanned() (PosterData, error)
 	Add(id string, poster Poster) error
 }

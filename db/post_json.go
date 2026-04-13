@@ -167,10 +167,7 @@ func (p *PostJSON) Add(post Post) (string, error) {
 	return post.ID(), nil
 }
 
-func (p *PostJSON) Delete(id string) error {
-	p.mtx.Lock()
-	defer p.mtx.Unlock()
-
+func (p *PostJSON) delete(id string) error {
 	posts, err := p.read()
 	if err != nil {
 		return fmt.Errorf("failed to fetch posts: %s", err)
@@ -227,6 +224,18 @@ func (p *PostJSON) Delete(id string) error {
 	return nil
 }
 
+func (p *PostJSON) Delete(id string) error {
+	p.mtx.Lock()
+	defer p.mtx.Unlock()
+
+	err := p.delete(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p *PostJSON) DeletePoster(id string) error {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
@@ -238,7 +247,7 @@ func (p *PostJSON) DeletePoster(id string) error {
 
 	for _, thread := range posts {
 		if thread.Poster == id {
-			err = p.Delete(thread.ID())
+			err = p.delete(thread.ID())
 			if err != nil {
 				return fmt.Errorf("failed to delete post: %s", err)
 			}
@@ -251,7 +260,7 @@ func (p *PostJSON) DeletePoster(id string) error {
 				continue
 			}
 
-			err = p.Delete(reply.ID())
+			err = p.delete(reply.ID())
 			if err != nil {
 				return fmt.Errorf("failed to delete post: %s", err)
 			}

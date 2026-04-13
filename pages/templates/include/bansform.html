@@ -1,0 +1,20 @@
+{{define "bansform"}}<DIV class="card" id="bansform">
+	<H2>Ban List</H2>
+	<FORM action="/admin/unbanid" method="post">
+		<TABLE>
+			<TR class="label">
+				<TD>IP</TD>
+				<TD>Last Post</TD>
+				<TD>Unban</TD>
+			</TR>
+			{{range $id, $poster := .}}<TR>
+				<TD>{{$id}}</TD>
+				<TD title="{{$poster.LastPost.Format "2006-01-02 15:04:05"}}">{{timeago $poster.LastPost}}</TD>
+				<TD><input type="checkbox" name="id" value="{{$id}}"></TD>
+			</TR>{{end}}
+			<TR>
+				<TD colspan="3"><INPUT type="submit" value="Submit" id="submit"></TD>
+			</TR>
+		</TABLE>
+	</FORM>
+</DIV>{{end}}

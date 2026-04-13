@@ -237,3 +237,76 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
+func AdminUnbanID(w http.ResponseWriter, r *http.Request) {
+	if Config.AdminPassword == "" {
+		writeError(w, r, "admin password not set", http.StatusForbidden)
+		return
+	}
+
+	// rate limiting
+	identity, err := deriveIdentity(r)
+	if err != nil {
+		writeError(w, r, fmt.Sprintf("failed to derive identity: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	poster, err := posters.Get(identity)
+	if err != nil && err != ErrUnknownPoster {
+		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
+		return
+	}
+	if poster.Banned {
+		writeError(w, r, "you are banned", http.StatusForbidden)
+		return
+	}
+	if poster.LastAdmin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
+		writeError(w, r, "you are being rate limited", http.StatusTooManyRequests)
+		return
+	}
+
+	poster.LastAdmin = time.Now()
+
+	err = posters.Add(identity, poster)
+	if err != nil {
+		writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	// check password
+	adminpw, err := r.Cookie("adminpw")
+	if err != nil {
+		writeError(w, r, fmt.Sprintf("failed to read admin password cookie: %s", err), http.StatusBadRequest)
+		return
+	}
+	if adminpw.Value != Config.AdminPassword {
+		writeError(w, r, "incorrect password", http.StatusUnauthorized)
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		writeError(w, r, fmt.Sprintf("failed to parse request: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	ids := r.Form["id"]
+
+	for _, id := range ids {
+		poster, err := posters.Get(id)
+		if err != nil && err != ErrUnknownPoster {
+			writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
+			return
+		}
+
+		poster.Banned = false
+
+		err = posters.Add(id, poster)
+		if err != nil {
+			writeError(w, r, fmt.Sprintf("failed to insert poster: %s", err), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	http.Redirect(w, r, "/admin/bans", http.StatusSeeOther)
+}
