@@ -92,12 +92,13 @@ func main() {
 }
 
 func checkKey() error {
+	_, err := os.Stat("data/session.key")
+	if err == nil {
+		return nil
+	}
+
 	f, err := os.OpenFile("data/session.key", os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
-		if os.IsExist(err) {
-			return nil
-		}
-
 		return err
 	}
 
