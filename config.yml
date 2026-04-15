@@ -7,7 +7,7 @@ adminPassword:
 adminPostOnly: false
 
 postCooldown: 30
-adminCooldown: 5
+loginCooldown: 10
 
 maxPostsPerPage: 5
 maxPages: 10

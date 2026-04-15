@@ -34,7 +34,7 @@ type ConfigFile struct {
 	AdminPostOnly bool   `yaml:"adminPostOnly"`
 
 	PostCooldown  int `yaml:"postCooldown"` // in seconds
-	AdminCooldown int `yaml:"adminCooldown"`
+	LoginCooldown int `yaml:"loginCooldown"`
 
 	MaxPostsPerPage int `yaml:"maxPostsPerPage"`
 	MaxPages        int `yaml:"maxPages"`

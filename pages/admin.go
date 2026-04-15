@@ -67,7 +67,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, "you are banned", http.StatusForbidden)
 		return
 	}
-	if poster.LastLogin.Add(time.Second * time.Duration(Config.AdminCooldown)).After(time.Now()) {
+	if poster.LastLogin.Add(time.Second * time.Duration(Config.LoginCooldown)).After(time.Now()) {
 		writeError(w, r, "you are logging in too quickly", http.StatusTooManyRequests)
 		return
 	}
