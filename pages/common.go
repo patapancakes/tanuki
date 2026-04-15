@@ -96,13 +96,13 @@ func Init() error {
 		return err
 	}
 
-	// admin
-	adminT, err = template.New("admin.html").Funcs(funcs).ParseFS(TemplatesFS, "admin.html")
+	// login
+	loginT, err = template.New("login.html").Funcs(funcs).ParseFS(TemplatesFS, "login.html")
 	if err != nil {
 		return err
 	}
 
-	adminT, err = adminT.ParseFS(TemplatesFS, "include/*.html")
+	loginT, err = loginT.ParseFS(TemplatesFS, "include/*.html")
 	if err != nil {
 		return err
 	}

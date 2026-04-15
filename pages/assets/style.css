@@ -17,14 +17,14 @@ IMG { border: 0px; }
 
 .slogan { font-style: italic; }
 
-#postform TABLE, #adminform TABLE, #bansform TABLE { display: inline-block; }
-#postform TD, #adminform TD { text-align: left; }
+#postform TABLE, #loginform TABLE, #bansform TABLE { display: inline-block; }
+#postform TD, #loginform TD { text-align: left; }
 #postform LABEL { font-weight: bolder; }
 #postform INPUT, #postform TEXTAREA { width: 400px; box-sizing: border-box; }
 @media (max-width: 960px) { #postform INPUT, #postform TEXTAREA { width: 100%; } }
 #postform #comment { resize: vertical; }
 
-#adminform #submit, #bansform #submit { width: 100%; }
+#loginform #submit, #bansform #submit { width: 100%; }
 
 #bansform .label { font-weight: bold; }
 

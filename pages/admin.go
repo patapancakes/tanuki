@@ -30,15 +30,15 @@ import (
 	. "github.com/patapancakes/tanuki/db"
 )
 
-var adminT *template.Template
+var loginT *template.Template
 
-func Admin(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 	if Config.AdminPassword == "" {
 		writeError(w, r, "admin password not set", http.StatusForbidden)
 		return
 	}
 
-	err := adminT.Execute(w, r.Header.Get("Referer"))
+	err := loginT.Execute(w, r.Header.Get("Referer"))
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to execute template: %s", err), http.StatusInternalServerError)
 		return

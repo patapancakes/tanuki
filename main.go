@@ -70,9 +70,9 @@ func main() {
 
 	http.HandleFunc("GET /thread/{id}", pages.Thread)
 
-	http.HandleFunc("GET /admin", pages.Admin)
 	http.HandleFunc("GET /admin/bans", pages.Bans)
 
+	http.HandleFunc("GET /admin/login", pages.Login)
 	http.HandleFunc("POST /admin/login", pages.AdminLogin)
 	http.HandleFunc("GET /admin/logout", pages.AdminLogout)
 
