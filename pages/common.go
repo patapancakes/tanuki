@@ -20,12 +20,15 @@ package pages
 
 import (
 	"embed"
+	"errors"
 	"html/template"
 	"io/fs"
 	"math/rand/v2"
 	"net/http"
 	"net/netip"
+	"os"
 
+	"github.com/golang-jwt/jwt/v5"
 	. "github.com/patapancakes/tanuki/config"
 	"github.com/patapancakes/tanuki/db"
 
@@ -52,6 +55,9 @@ var (
 	//go:embed assets
 	assets      embed.FS
 	AssetsFS, _ = fs.Sub(assets, "assets")
+
+	errInvalidSession        = errors.New("invalid session")
+	errInvalidSessionSubject = errors.New("invalid session subject")
 )
 
 func Init() error {
@@ -135,4 +141,36 @@ func deriveIdentity(r *http.Request) (string, error) {
 	}
 
 	return ip.String(), nil
+}
+
+func checkAuth(r *http.Request) error {
+	session, err := r.Cookie("session")
+	if err != nil {
+		return err
+	}
+
+	token, err := jwt.Parse(session.Value, func(token *jwt.Token) (any, error) {
+		return os.ReadFile("data/session.key")
+	})
+	if err != nil {
+		return err
+	}
+	if !token.Valid {
+		return errInvalidSession
+	}
+
+	identity, err := deriveIdentity(r)
+	if err != nil {
+		return err
+	}
+
+	subject, err := token.Claims.GetSubject()
+	if err != nil {
+		return err
+	}
+	if subject != identity {
+		return errInvalidSessionSubject
+	}
+
+	return nil
 }

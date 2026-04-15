@@ -19,7 +19,6 @@
 package pages
 
 import (
-	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -32,43 +31,6 @@ import (
 )
 
 var adminT *template.Template
-
-var (
-	errInvalidSession        = errors.New("invalid session")
-	errInvalidSessionSubject = errors.New("invalid session subject")
-)
-
-func checkAuth(r *http.Request) error {
-	session, err := r.Cookie("session")
-	if err != nil {
-		return err
-	}
-
-	token, err := jwt.Parse(session.Value, func(token *jwt.Token) (any, error) {
-		return os.ReadFile("data/session.key")
-	})
-	if err != nil {
-		return err
-	}
-	if !token.Valid {
-		return errInvalidSession
-	}
-
-	identity, err := deriveIdentity(r)
-	if err != nil {
-		return err
-	}
-
-	subject, err := token.Claims.GetSubject()
-	if err != nil {
-		return err
-	}
-	if subject != identity {
-		return errInvalidSessionSubject
-	}
-
-	return nil
-}
 
 func Admin(w http.ResponseWriter, r *http.Request) {
 	if Config.AdminPassword == "" {
