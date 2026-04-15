@@ -50,7 +50,7 @@ func Confirm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cd.Action = r.PathValue("action")
-	cd.Referer = r.Header.Get("Referer")
+	cd.Referer = r.Referer()
 
 	err = confirmT.Execute(w, cd)
 	if err != nil {

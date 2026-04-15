@@ -38,7 +38,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := loginT.Execute(w, r.Header.Get("Referer"))
+	err := loginT.Execute(w, r.Referer())
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to execute template: %s", err), http.StatusInternalServerError)
 		return
@@ -128,7 +128,7 @@ func AdminLogout(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	redirect := r.Header.Get("Referer")
+	redirect := r.Referer()
 	if redirect == "" {
 		redirect = "/"
 	}
@@ -239,7 +239,7 @@ func AdminUnbanID(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	redirect := r.Header.Get("Referer")
+	redirect := r.Referer()
 	if redirect == "" {
 		redirect = "/"
 	}
