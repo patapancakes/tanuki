@@ -149,7 +149,12 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	redirect := r.Header.Get("Referer")
+	if redirect == "" {
+		redirect = "/"
+	}
+
+	http.Redirect(w, r, redirect, http.StatusSeeOther)
 }
 
 func AdminLogout(w http.ResponseWriter, r *http.Request) {
@@ -161,7 +166,12 @@ func AdminLogout(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	redirect := r.Header.Get("Referer")
+	if redirect == "" {
+		redirect = "/"
+	}
+
+	http.Redirect(w, r, redirect, http.StatusSeeOther)
 }
 
 func AdminDelete(w http.ResponseWriter, r *http.Request) {
@@ -177,7 +187,12 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	redirect := r.Header.Get("Referer")
+	if redirect == "" {
+		redirect = "/"
+	}
+
+	http.Redirect(w, r, redirect, http.StatusSeeOther)
 }
 
 func AdminBan(w http.ResponseWriter, r *http.Request) {
@@ -213,7 +228,12 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	redirect := r.Header.Get("Referer")
+	if redirect == "" {
+		redirect = "/"
+	}
+
+	http.Redirect(w, r, redirect, http.StatusSeeOther)
 }
 
 func AdminUnbanID(w http.ResponseWriter, r *http.Request) {
@@ -251,5 +271,10 @@ func AdminUnbanID(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, "/admin/bans", http.StatusSeeOther)
+	redirect := r.Header.Get("Referer")
+	if redirect == "" {
+		redirect = "/"
+	}
+
+	http.Redirect(w, r, redirect, http.StatusSeeOther)
 }
