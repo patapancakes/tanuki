@@ -170,6 +170,11 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if post.Poster == "admin" {
+		writeError(w, r, "admin cannot be banned", http.StatusBadRequest)
+		return
+	}
+
 	poster, err := posters.Get(post.Poster)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
