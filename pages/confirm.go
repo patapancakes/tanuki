@@ -27,9 +27,10 @@ import (
 )
 
 type ConfirmData struct {
-	Post    Post
 	Action  string
 	Referer string
+
+	Post Post
 }
 
 var confirmT *template.Template

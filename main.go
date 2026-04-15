@@ -26,6 +26,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	. "github.com/patapancakes/tanuki/config"
@@ -113,7 +114,7 @@ func checkKey() error {
 
 func cache(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "" {
+		if strings.HasSuffix(r.URL.Path, "/") {
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
