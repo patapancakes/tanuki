@@ -1,6 +1,7 @@
 {{define "adminform"}}<DIV class="card" id="adminform">
 	<H2>Admin Login</H2>
 	<FORM action="/admin/login" method="post">
+		{{with .}}<INPUT type="hidden" name="referer" value="{{.}}">{{end}}
 		<TABLE>
 			<TR>
 				<TD><LABEL for="password">Password</LABEL></TD>

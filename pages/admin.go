@@ -76,7 +76,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := adminT.Execute(w, nil)
+	err := adminT.Execute(w, r.Header.Get("Referer"))
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to execute template: %s", err), http.StatusInternalServerError)
 		return
@@ -149,7 +149,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	redirect := r.Header.Get("Referer")
+	redirect := r.FormValue("referer")
 	if redirect == "" {
 		redirect = "/"
 	}
