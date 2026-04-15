@@ -99,7 +99,7 @@ func (p *PosterJSON) GetBanned() (PosterData, error) {
 
 	banned := make(PosterData)
 	for id, p := range posters {
-		if !p.Banned {
+		if !p.IsBanned() {
 			continue
 		}
 

@@ -67,7 +67,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
 	}
-	if poster.Banned {
+	if poster.IsBanned() {
 		writeError(w, r, "you are banned", http.StatusForbidden)
 		return
 	}

@@ -63,7 +63,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, fmt.Sprintf("failed to look up poster info: %s", err), http.StatusInternalServerError)
 		return
 	}
-	if poster.Banned {
+	if poster.IsBanned() {
 		writeError(w, r, "you are banned", http.StatusForbidden)
 		return
 	}
@@ -143,13 +143,13 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = posts.Delete(r.PathValue("id"))
+	err = posts.Delete(r.FormValue("id"))
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to delete post: %s", err), http.StatusInternalServerError)
 		return
 	}
 
-	redirect := r.Header.Get("Referer")
+	redirect := r.FormValue("referer")
 	if redirect == "" {
 		redirect = "/"
 	}
@@ -164,7 +164,7 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	post, err := posts.Get(r.PathValue("id"))
+	post, err := posts.Get(r.FormValue("id"))
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to fetch post: %s", err), http.StatusInternalServerError)
 		return
@@ -176,7 +176,8 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poster.Banned = true
+	poster.BanTime = time.Now()
+	poster.BanReason = r.FormValue("reason")
 
 	err = posters.Add(post.Poster, poster)
 	if err != nil {
@@ -190,7 +191,7 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirect := r.Header.Get("Referer")
+	redirect := r.FormValue("referer")
 	if redirect == "" {
 		redirect = "/"
 	}
@@ -224,7 +225,7 @@ func AdminUnbanID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		poster.Banned = false
+		poster.BanTime = time.Time{}
 
 		err = posters.Add(id, poster)
 		if err != nil {

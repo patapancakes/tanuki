@@ -28,7 +28,12 @@ var ErrUnknownPoster = errors.New("unknown poster")
 type Poster struct {
 	LastPost  time.Time `json:"lastPost,omitzero"`
 	LastLogin time.Time `json:"lastLogin,omitzero"`
-	Banned    bool      `json:"banned,omitempty"`
+	BanTime   time.Time `json:"banTime,omitzero"`
+	BanReason string    `json:"banReason,omitempty"`
+}
+
+func (p Poster) IsBanned() bool {
+	return !p.BanTime.IsZero()
 }
 
 type PosterData map[string]Poster

@@ -118,6 +118,17 @@ func Init() error {
 		return err
 	}
 
+	// confirm
+	confirmT, err = template.New("confirm.html").Funcs(funcs).ParseFS(TemplatesFS, "confirm.html")
+	if err != nil {
+		return err
+	}
+
+	confirmT, err = confirmT.ParseFS(TemplatesFS, "include/*.html")
+	if err != nil {
+		return err
+	}
+
 	// database
 	posts = db.NewPostJSON("data/posts.json")
 	posters = db.NewPosterJSON("data/posters.json")

@@ -1,0 +1,17 @@
+{{define "confirmform"}}<DIV class="card" id="confirmform">
+	<H2>Really {{if eq .Action "ban"}}Ban{{else}}Delete{{end}}?</H2>
+	{{template "postpreview" .Post}}
+	<FORM action="/admin/{{.Action}}" method="post">
+		<INPUT type="hidden" name="id" value="{{.Post.ID}}">
+		{{with .Referer}}<INPUT type="hidden" name="referer" value="{{.}}">{{end}}
+		<TABLE>
+			<TR>
+				<TD><LABEL for="reason">Reason</LABEL></TD>
+				<TD><INPUT type="text" name="reason" id="reason"></TD>
+			</TR>
+			<TR>
+				<TD colspan="2"><INPUT type="submit" value="Submit" id="submit"></TD>
+			</TR>
+		</TABLE>
+	</FORM>
+</DIV>{{end}}

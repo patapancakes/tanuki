@@ -1,7 +1,7 @@
 {{define "postbase"}}<DIV class="details">
 	<SPAN class="commands">
-		<A href="/admin/delete/{{.ID}}" class="admin">Delete</A>
-		<A href="/admin/ban/{{.ID}}" class="admin">Ban</A>
+		<A href="/admin/confirm/delete/{{.ID}}" class="admin">Delete</A>
+		<A href="/admin/confirm/ban/{{.ID}}" class="admin">Ban</A>
 		{{if .IsThread}}<A href="/thread/{{.ID}}">Reply</A>{{end}}
 	</SPAN>
 	{{if .IsAdmin}}<IMG class="rank" alt="Admin" src="/assets/star.gif">{{end}}

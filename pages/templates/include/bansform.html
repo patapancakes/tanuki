@@ -4,16 +4,18 @@
 		<TABLE>
 			<TR class="label">
 				<TD>IP</TD>
-				<TD>Last Post</TD>
+				<TD>Reason</TD>
+				<TD>When</TD>
 				<TD>Unban</TD>
 			</TR>
 			{{range $id, $poster := .}}<TR>
 				<TD>{{$id}}</TD>
-				<TD title="{{$poster.LastPost.Format "2006-01-02 15:04:05"}}">{{timeago $poster.LastPost}}</TD>
+				<TD>{{with $poster.BanReason}}{{.}}{{else}}None{{end}}</TD>
+				<TD title="{{$poster.BanTime.Format "2006-01-02 15:04:05"}}">{{timeago $poster.BanTime}}</TD>
 				<TD><input type="checkbox" name="id" value="{{$id}}"></TD>
 			</TR>{{end}}
 			<TR>
-				<TD colspan="3"><INPUT type="submit" value="Submit" id="submit"></TD>
+				<TD colspan="4"><INPUT type="submit" value="Submit" id="submit"></TD>
 			</TR>
 		</TABLE>
 	</FORM>
