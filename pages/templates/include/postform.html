@@ -1,6 +1,7 @@
 {{define "postform"}}<DIV class="card form" id="postform">
 	<H2>New {{if eq . ""}}Topic{{else}}Reply{{end}}</H2>
 	<FORM action="/newpost" method="post" enctype="multipart/form-data">
+		<INPUT type="hidden" name="parent" value="{{.}}">
 		<TABLE>
 			<TR>
 				<TD><LABEL for="name">Name</LABEL></TD>
@@ -23,6 +24,5 @@
 				<TD><INPUT type="submit" value="Submit" id="submit"></TD>
 			</TR>
 		</TABLE>
-		<INPUT type="hidden" name="parent" value="{{.}}">
 	</FORM>
 </DIV>{{end}}
