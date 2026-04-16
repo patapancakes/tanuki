@@ -1,4 +1,4 @@
-{{define "confirmform"}}<DIV class="card" id="confirmform">
+{{define "confirmform"}}<DIV class="card form" id="confirmform">
 	<H2>Really {{if eq .Action "ban"}}Ban{{else}}Delete{{end}}?</H2>
 	{{template "postpreview" .Post}}
 	<FORM action="/admin/{{.Action}}" method="post">
