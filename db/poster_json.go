@@ -41,7 +41,7 @@ func (p *PosterJSON) read() (PosterData, error) {
 			return make(PosterData), nil
 		}
 
-		return nil, fmt.Errorf("failed to open posters file: %s", err)
+		return nil, fmt.Errorf("failed to open posters file: %w", err)
 	}
 
 	defer f.Close()
@@ -49,7 +49,7 @@ func (p *PosterJSON) read() (PosterData, error) {
 	posters := make(PosterData)
 	err = json.NewDecoder(f).Decode(&posters)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode posters file: %s", err)
+		return nil, fmt.Errorf("failed to decode posters file: %w", err)
 	}
 
 	return posters, nil
@@ -58,14 +58,14 @@ func (p *PosterJSON) read() (PosterData, error) {
 func (p *PosterJSON) write(posters PosterData) error {
 	f, err := os.OpenFile(p.file, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
-		return fmt.Errorf("failed to open posters file: %s", err)
+		return fmt.Errorf("failed to open posters file: %w", err)
 	}
 
 	defer f.Close()
 
 	err = json.NewEncoder(f).Encode(posters)
 	if err != nil {
-		return fmt.Errorf("failed to encode posters file: %s", err)
+		return fmt.Errorf("failed to encode posters file: %w", err)
 	}
 
 	return nil
@@ -77,7 +77,7 @@ func (p *PosterJSON) Get(id string) (Poster, error) {
 
 	posters, err := p.read()
 	if err != nil {
-		return Poster{}, fmt.Errorf("failed to fetch posters: %s", err)
+		return Poster{}, fmt.Errorf("failed to fetch posters: %w", err)
 	}
 
 	poster, ok := posters[id]
@@ -94,7 +94,7 @@ func (p *PosterJSON) GetBanned() (PosterData, error) {
 
 	posters, err := p.read()
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch posters: %s", err)
+		return nil, fmt.Errorf("failed to fetch posters: %w", err)
 	}
 
 	banned := make(PosterData)
@@ -115,14 +115,14 @@ func (p *PosterJSON) Add(id string, poster Poster) error {
 
 	posters, err := p.read()
 	if err != nil {
-		return fmt.Errorf("failed to fetch posters: %s", err)
+		return fmt.Errorf("failed to fetch posters: %w", err)
 	}
 
 	posters[id] = poster
 
 	err = p.write(posters)
 	if err != nil {
-		return fmt.Errorf("failed to insert poster: %s", err)
+		return fmt.Errorf("failed to insert poster: %w", err)
 	}
 
 	return nil

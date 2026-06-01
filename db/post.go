@@ -79,12 +79,12 @@ func (p Post) FullPath() string {
 func (p Post) DeleteImage() error {
 	err := os.Remove(path.Join("data", p.FullPath()))
 	if err != nil {
-		return fmt.Errorf("failed to delete full image: %s", err)
+		return fmt.Errorf("failed to delete full image: %w", err)
 	}
 
 	err = os.Remove(path.Join("data", p.ThumbPath()))
 	if err != nil {
-		return fmt.Errorf("failed to delete thumbnail image: %s", err)
+		return fmt.Errorf("failed to delete thumbnail image: %w", err)
 	}
 
 	return nil

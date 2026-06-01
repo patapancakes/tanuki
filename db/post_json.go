@@ -44,7 +44,7 @@ func (p *PostJSON) read() (PostData, error) {
 			return nil, nil
 		}
 
-		return nil, fmt.Errorf("failed to open log file: %s", err)
+		return nil, fmt.Errorf("failed to open log file: %w", err)
 	}
 
 	defer f.Close()
@@ -52,7 +52,7 @@ func (p *PostJSON) read() (PostData, error) {
 	var posts PostData
 	err = json.NewDecoder(f).Decode(&posts)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode log file: %s", err)
+		return nil, fmt.Errorf("failed to decode log file: %w", err)
 	}
 
 	return posts, nil
@@ -61,14 +61,14 @@ func (p *PostJSON) read() (PostData, error) {
 func (p *PostJSON) write(posts PostData) error {
 	f, err := os.OpenFile(p.file, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
-		return fmt.Errorf("failed to open log file: %s", err)
+		return fmt.Errorf("failed to open log file: %w", err)
 	}
 
 	defer f.Close()
 
 	err = json.NewEncoder(f).Encode(posts)
 	if err != nil {
-		return fmt.Errorf("failed to encode log file: %s", err)
+		return fmt.Errorf("failed to encode log file: %w", err)
 	}
 
 	return nil
@@ -113,7 +113,7 @@ func (p *PostJSON) Get(id string) (Post, error) {
 
 	posts, err := p.read()
 	if err != nil {
-		return Post{}, fmt.Errorf("failed to fetch posts: %s", err)
+		return Post{}, fmt.Errorf("failed to fetch posts: %w", err)
 	}
 
 	for _, p := range posts {
@@ -137,7 +137,7 @@ func (p *PostJSON) Add(post Post) (string, error) {
 
 	posts, err := p.read()
 	if err != nil {
-		return "", fmt.Errorf("failed to fetch posts: %s", err)
+		return "", fmt.Errorf("failed to fetch posts: %w", err)
 	}
 
 	if post.Parent == "" { // new thread
@@ -161,7 +161,7 @@ func (p *PostJSON) Add(post Post) (string, error) {
 
 	err = p.write(posts)
 	if err != nil {
-		return "", fmt.Errorf("failed to write posts: %s", err)
+		return "", fmt.Errorf("failed to write posts: %w", err)
 	}
 
 	return post.ID(), nil
@@ -170,7 +170,7 @@ func (p *PostJSON) Add(post Post) (string, error) {
 func (p *PostJSON) delete(id string) error {
 	posts, err := p.read()
 	if err != nil {
-		return fmt.Errorf("failed to fetch posts: %s", err)
+		return fmt.Errorf("failed to fetch posts: %w", err)
 	}
 
 	var post Post
@@ -197,7 +197,7 @@ func (p *PostJSON) delete(id string) error {
 
 			err = reply.DeleteImage()
 			if err != nil {
-				return fmt.Errorf("failed to delete reply images: %s", err)
+				return fmt.Errorf("failed to delete reply images: %w", err)
 			}
 		}
 
@@ -212,13 +212,13 @@ func (p *PostJSON) delete(id string) error {
 	if post.Image {
 		err = post.DeleteImage()
 		if err != nil {
-			return fmt.Errorf("failed to delete post images: %s", err)
+			return fmt.Errorf("failed to delete post images: %w", err)
 		}
 	}
 
 	err = p.write(posts)
 	if err != nil {
-		return fmt.Errorf("failed to write posts: %s", err)
+		return fmt.Errorf("failed to write posts: %w", err)
 	}
 
 	return nil
@@ -242,14 +242,14 @@ func (p *PostJSON) DeletePoster(id string) error {
 
 	posts, err := p.read()
 	if err != nil {
-		return fmt.Errorf("failed to fetch posts: %s", err)
+		return fmt.Errorf("failed to fetch posts: %w", err)
 	}
 
 	for _, thread := range posts {
 		if thread.Poster == id {
 			err = p.delete(thread.ID())
 			if err != nil {
-				return fmt.Errorf("failed to delete post: %s", err)
+				return fmt.Errorf("failed to delete post: %w", err)
 			}
 
 			continue
@@ -262,7 +262,7 @@ func (p *PostJSON) DeletePoster(id string) error {
 
 			err = p.delete(reply.ID())
 			if err != nil {
-				return fmt.Errorf("failed to delete post: %s", err)
+				return fmt.Errorf("failed to delete post: %w", err)
 			}
 		}
 	}
