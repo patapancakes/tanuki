@@ -4,23 +4,20 @@
 		<INPUT type="hidden" name="parent" value="{{.}}">
 		<TABLE>
 			<TR>
-				<TD><LABEL for="name">Name</LABEL></TD>
-				<TD><INPUT type="text" name="name" id="name" maxlength="{{config.MaxNameLength}}"></TD>
-			</TR>
-			{{if eq . ""}}<TR>
-				<TD><LABEL for="subject">Subject</LABEL></TD>
-				<TD><INPUT type="text" name="subject" id="subject" maxlength="{{config.MaxSubjectLength}}"></TD>
-			</TR>{{end}}
-			<TR>
-				<TD><LABEL for="comment">Comment</LABEL></TD>
-				<TD><TEXTAREA name="comment" id="comment" cols="50" rows="4" maxlength="{{config.MaxCommentLength}}"></TEXTAREA></TD>
+				<TD>
+					<LABEL for="name">Name</LABEL>
+					<INPUT type="text" name="name" id="name" maxlength="{{config.MaxNameLength}}">
+				</TD>
+				{{if eq . ""}}<TD>
+					<LABEL for="subject">Subject</LABEL>
+					<INPUT type="text" name="subject" id="subject" maxlength="{{config.MaxSubjectLength}}">
+				</TD>{{end}}
 			</TR>
 			<TR>
-				<TD><LABEL for="image">Image</LABEL></TD>
+				<TD colspan="2"><TEXTAREA name="comment" id="comment" cols="50" rows="4" maxlength="{{config.MaxCommentLength}}"></TEXTAREA></TD>
+			</TR>
+			<TR>
 				<TD><INPUT type="file" name="image" id="image" accept="image/bmp, image/png, image/jpeg, image/gif"></TD>
-			</TR>
-			<TR>
-				<TD></TD>
 				<TD><INPUT type="submit" value="Submit" id="submit"></TD>
 			</TR>
 		</TABLE>
