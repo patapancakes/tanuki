@@ -13,8 +13,7 @@ maxPostsPerPage: 5
 maxPages: 10
 maxBumps: 50
 
-maxNameLength: 20
-maxSubjectLength: 32
-maxCommentLength: 300
-
+maxNameSize: 20
+maxSubjectSize: 32
+maxCommentSize: 300
 maxUploadSize: 4

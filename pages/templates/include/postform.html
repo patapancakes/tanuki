@@ -6,15 +6,15 @@
 			<TR>
 				<TD>
 					<LABEL for="name">Name</LABEL>
-					<INPUT type="text" name="name" id="name" maxlength="{{config.MaxNameLength}}">
+					<INPUT type="text" name="name" id="name" maxlength="{{config.MaxNameSize}}">
 				</TD>
 				{{if eq . ""}}<TD>
 					<LABEL for="subject">Subject</LABEL>
-					<INPUT type="text" name="subject" id="subject" maxlength="{{config.MaxSubjectLength}}">
+					<INPUT type="text" name="subject" id="subject" maxlength="{{config.MaxSubjectSize}}">
 				</TD>{{end}}
 			</TR>
 			<TR>
-				<TD colspan="2"><TEXTAREA name="comment" id="comment" cols="50" rows="4" maxlength="{{config.MaxCommentLength}}"></TEXTAREA></TD>
+				<TD colspan="2"><TEXTAREA name="comment" id="comment" cols="50" rows="4" maxlength="{{config.MaxCommentSize}}"></TEXTAREA></TD>
 			</TR>
 			<TR>
 				<TD><INPUT type="file" name="image" id="image" accept="image/bmp, image/png, image/jpeg, image/gif"></TD>

@@ -85,19 +85,19 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	post.Name = strings.TrimSpace(r.PostFormValue("name"))
-	if !utf8.ValidString(post.Name) || utf8.RuneCountInString(post.Name) > Config.MaxNameLength {
+	if !utf8.ValidString(post.Name) || utf8.RuneCountInString(post.Name) > Config.MaxNameSize {
 		writeError(w, r, "invalid name", http.StatusBadRequest)
 		return
 	}
 
 	post.Subject = strings.TrimSpace(r.PostFormValue("subject"))
-	if !utf8.ValidString(post.Subject) || utf8.RuneCountInString(post.Subject) > Config.MaxSubjectLength {
+	if !utf8.ValidString(post.Subject) || utf8.RuneCountInString(post.Subject) > Config.MaxSubjectSize {
 		writeError(w, r, "invalid subject", http.StatusBadRequest)
 		return
 	}
 
 	post.Body = strings.TrimSpace(r.PostFormValue("comment"))
-	if !utf8.ValidString(post.Body) || utf8.RuneCountInString(post.Body) > Config.MaxCommentLength {
+	if !utf8.ValidString(post.Body) || utf8.RuneCountInString(post.Body) > Config.MaxCommentSize {
 		writeError(w, r, "invalid comment", http.StatusBadRequest)
 		return
 	}

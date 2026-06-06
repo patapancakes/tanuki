@@ -40,11 +40,10 @@ type ConfigFile struct {
 	MaxPages        int `yaml:"maxPages"`
 	MaxBumps        int `yaml:"maxBumps"`
 
-	MaxNameLength    int `yaml:"maxNameLength"`
-	MaxSubjectLength int `yaml:"maxSubjectLength"`
-	MaxCommentLength int `yaml:"maxCommentLength"`
-
-	MaxUploadSize float32 `yaml:"maxUploadSize"` // in megabytes
+	MaxNameSize    int     `yaml:"maxNameSize"`
+	MaxSubjectSize int     `yaml:"maxSubjectSize"`
+	MaxCommentSize int     `yaml:"maxCommentSize"`
+	MaxUploadSize  float32 `yaml:"maxUploadSize"` // in megabytes
 }
 
 var Config ConfigFile
