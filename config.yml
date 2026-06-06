@@ -17,4 +17,4 @@ maxNameLength: 20
 maxSubjectLength: 32
 maxCommentLength: 300
 
-maxUploadSize: 4096
+maxUploadSize: 4

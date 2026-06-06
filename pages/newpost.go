@@ -35,7 +35,7 @@ import (
 )
 
 func NewPost(w http.ResponseWriter, r *http.Request) {
-	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxUploadSize)*1024)
+	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxUploadSize*102*1024))
 
 	// admin
 	var admin bool

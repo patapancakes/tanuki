@@ -44,7 +44,7 @@ type ConfigFile struct {
 	MaxSubjectLength int `yaml:"maxSubjectLength"`
 	MaxCommentLength int `yaml:"maxCommentLength"`
 
-	MaxUploadSize int `yaml:"maxUploadSize"` // in kilobytes
+	MaxUploadSize float32 `yaml:"maxUploadSize"` // in megabytes
 }
 
 var Config ConfigFile
