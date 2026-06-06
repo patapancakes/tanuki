@@ -1,5 +1,5 @@
-{{define "postform"}}<DIV class="card form" id="postform">
-	<H2>New {{if eq . ""}}Topic{{else}}Reply{{end}}</H2>
+{{define "postform"}}{{$topic := eq . ""}}<DIV class="card form" id="postform">
+	<H2>New {{if $topic}}Topic{{else}}Reply{{end}}</H2>
 	<FORM action="/newpost" method="post" enctype="multipart/form-data">
 		<INPUT type="hidden" name="parent" value="{{.}}">
 		<TABLE>
@@ -8,7 +8,7 @@
 					<LABEL for="name">Name</LABEL>
 					<INPUT type="text" name="name" id="name" maxlength="{{config.MaxNameSize}}">
 				</TD>
-				{{if eq . ""}}<TD>
+				{{if $topic}}<TD>
 					<LABEL for="subject">Subject</LABEL>
 					<INPUT type="text" name="subject" id="subject" maxlength="{{config.MaxSubjectSize}}">
 				</TD>{{end}}
@@ -18,7 +18,7 @@
 			</TR>
 			<TR>
 				<TD><INPUT type="file" name="image" id="image" accept="image/bmp, image/png, image/jpeg, image/gif"></TD>
-				<TD><INPUT type="submit" value="Submit" id="submit"></TD>
+				<TD style="text-align: right;"><INPUT type="submit" value="Submit" id="submit"></TD>
 			</TR>
 			{{with config.SiteRules}}<TR>
 				<TD colspan="2">{{template "rules" .}}</TD>

@@ -18,12 +18,10 @@ IMG { border: 0px; }
 .slogan { font-style: italic; }
 
 .form TABLE { display: inline-block; }
-.form #submit { width: 100%; }
 
-#postform TD, #loginform TD { text-align: left; }
-#postform TEXTAREA { width: 100%; box-sizing: border-box; }
+#postform TD { text-align: left; }
+#postform #comment { width: 100%; box-sizing: border-box; resize: vertical; }
 @media (max-width: 500px) { #postform #name, #postform #subject { width: 100%; box-sizing: border-box; } }
-#postform #comment { resize: vertical; }
 
 #rules { font-size: small; }
 
