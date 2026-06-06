@@ -18,6 +18,3 @@ maxSubjectLength: 32
 maxCommentLength: 300
 
 maxUploadSize: 4096
-
-thumbnailDimensions: 150
-thumbnailQuality: 80

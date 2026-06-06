@@ -45,9 +45,6 @@ type ConfigFile struct {
 	MaxCommentLength int `yaml:"maxCommentLength"`
 
 	MaxUploadSize int `yaml:"maxUploadSize"` // in kilobytes
-
-	ThumbnailDimensions int `yaml:"thumbnailDimensions"`
-	ThumbnailQuality    int `yaml:"thumbnailQuality"`
 }
 
 var Config ConfigFile

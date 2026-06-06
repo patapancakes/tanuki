@@ -31,8 +31,6 @@ import (
 	"path"
 	"time"
 
-	. "github.com/patapancakes/tanuki/config"
-
 	"golang.org/x/image/draw"
 )
 
@@ -105,9 +103,9 @@ func (p Post) WriteImage(img image.Image) error {
 	}
 
 	// thumbnail image
-	scale := float64(Config.ThumbnailDimensions) / float64(img.Bounds().Dx()) // assume landscape
-	if img.Bounds().Dy() >= img.Bounds().Dx() {                               // it's not
-		scale = float64(Config.ThumbnailDimensions) / float64(img.Bounds().Dy())
+	scale := float64(150) / float64(img.Bounds().Dx()) // assume landscape
+	if img.Bounds().Dy() >= img.Bounds().Dx() {        // it's not
+		scale = float64(150) / float64(img.Bounds().Dy())
 	}
 
 	oimg := image.NewRGBA(image.Rect(0, 0, int(scale*float64(img.Bounds().Dx())), int(scale*float64(img.Bounds().Dy()))))
@@ -122,7 +120,7 @@ func (p Post) WriteImage(img image.Image) error {
 
 	defer of.Close()
 
-	err = jpeg.Encode(of, oimg, &jpeg.Options{Quality: Config.ThumbnailQuality})
+	err = jpeg.Encode(of, oimg, &jpeg.Options{Quality: 80})
 	if err != nil {
 		return err
 	}
