@@ -20,6 +20,9 @@
 				<TD><INPUT type="file" name="image" id="image" accept="image/bmp, image/png, image/jpeg, image/gif"></TD>
 				<TD><INPUT type="submit" value="Submit" id="submit"></TD>
 			</TR>
+			{{with config.SiteRules}}<TR>
+				<TD colspan="2">{{template "rules" .}}</TD>
+			</TR>{{end}}
 		</TABLE>
 	</FORM>
 </DIV>{{end}}

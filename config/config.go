@@ -29,6 +29,7 @@ type ConfigFile struct {
 
 	SiteName    string   `yaml:"siteName"`
 	SiteSlogans []string `yaml:"siteSlogans"`
+	SiteRules   []string `yaml:"siteRules"`
 
 	AdminPassword string `yaml:"adminPassword"`
 	AdminPostOnly bool   `yaml:"adminPostOnly"`
