@@ -103,9 +103,12 @@ func (p Post) WriteImage(img image.Image) error {
 	}
 
 	// thumbnail image
-	scale := float64(150) / float64(img.Bounds().Dx()) // assume landscape
-	if img.Bounds().Dy() >= img.Bounds().Dx() {        // it's not
-		scale = float64(150) / float64(img.Bounds().Dy())
+	const maxDimensionSize = 150
+	const thumbnailQuality = 80
+
+	scale := maxDimensionSize / float64(img.Bounds().Dx()) // assume landscape
+	if img.Bounds().Dy() >= img.Bounds().Dx() {            // it's not
+		scale = maxDimensionSize / float64(img.Bounds().Dy())
 	}
 
 	oimg := image.NewRGBA(image.Rect(0, 0, int(scale*float64(img.Bounds().Dx())), int(scale*float64(img.Bounds().Dy()))))
@@ -120,7 +123,7 @@ func (p Post) WriteImage(img image.Image) error {
 
 	defer of.Close()
 
-	err = jpeg.Encode(of, oimg, &jpeg.Options{Quality: 80})
+	err = jpeg.Encode(of, oimg, &jpeg.Options{Quality: thumbnailQuality})
 	if err != nil {
 		return err
 	}
