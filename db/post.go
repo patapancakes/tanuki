@@ -45,7 +45,7 @@ type Post struct {
 	Image   bool      `json:"image,omitempty"`
 	Poster  string    `json:"poster,omitempty"`
 	Posted  time.Time `json:"posted,omitzero"`
-	Replies PostData  `json:"replies,omitempty"`
+	Replies []Post    `json:"replies,omitempty"`
 }
 
 func (p Post) ID() string {
