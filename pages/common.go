@@ -151,6 +151,9 @@ func deriveIdentity(r *http.Request) (string, error) {
 			return "", err
 		}
 	}
+	if ip.Is6() && !ip.Is4In6() {
+		ip = netip.PrefixFrom(ip, 64).Masked().Addr()
+	}
 
 	return ip.String(), nil
 }
