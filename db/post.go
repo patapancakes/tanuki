@@ -29,6 +29,7 @@ import (
 	"image/png"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"golang.org/x/image/draw"
@@ -55,7 +56,7 @@ func (p Post) ID() string {
 	b := make([]byte, 8)
 	binary.LittleEndian.PutUint64(b, uint64(p.Posted.UnixMilli()))
 
-	return base64.RawURLEncoding.EncodeToString(b)
+	return strings.TrimRight(base64.RawURLEncoding.EncodeToString(b), "A")
 }
 
 func (p Post) IsThread() bool {
