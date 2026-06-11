@@ -23,6 +23,7 @@ import (
 	"errors"
 	"html/template"
 	"io/fs"
+	"log"
 	"math/rand/v2"
 	"net/http"
 	"net/netip"
@@ -184,4 +185,9 @@ func checkAuth(r *http.Request) error {
 	}
 
 	return nil
+}
+
+func writeLog(r *http.Request, text string) {
+	id, _ := deriveIdentity(r)
+	log.Printf("[%s] %s: %s", id, r.URL.Path, text)
 }

@@ -117,6 +117,8 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, redirect, http.StatusSeeOther)
+
+	writeLog(r, "logged in as admin")
 }
 
 func AdminLogout(w http.ResponseWriter, r *http.Request) {
@@ -155,6 +157,8 @@ func AdminDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, redirect, http.StatusSeeOther)
+
+	writeLog(r, fmt.Sprintf("deleted post with id \"%s\"", r.FormValue("id")))
 }
 
 func AdminBan(w http.ResponseWriter, r *http.Request) {
@@ -202,6 +206,8 @@ func AdminBan(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, redirect, http.StatusSeeOther)
+
+	writeLog(r, fmt.Sprintf("banned poster with id \"%s\" for reason \"%s\"", post.Poster, poster.BanReason))
 }
 
 func AdminUnbanID(w http.ResponseWriter, r *http.Request) {
@@ -245,4 +251,6 @@ func AdminUnbanID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, redirect, http.StatusSeeOther)
+
+	writeLog(r, fmt.Sprintf("unbanned poster(s) with id(s) \"%s\"", ids))
 }

@@ -152,4 +152,11 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/thread/%s", redirect), http.StatusFound)
+
+	postTypeText := "thread"
+	if !post.IsThread() {
+		postTypeText = fmt.Sprintf("reply to thread \"%s\"", post.Parent)
+	}
+
+	writeLog(r, fmt.Sprintf("created new %s with id \"%s\"", postTypeText, post.ID()))
 }

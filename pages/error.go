@@ -20,9 +20,7 @@ package pages
 
 import (
 	"html/template"
-	"log"
 	"net/http"
-	"net/netip"
 )
 
 var errorT *template.Template
@@ -32,8 +30,5 @@ func writeError(w http.ResponseWriter, r *http.Request, error string, code int) 
 
 	errorT.Execute(w, error)
 
-	addrport, _ := netip.ParseAddrPort(r.RemoteAddr)
-	addr := addrport.Addr().String()
-
-	log.Printf("[%s] %s: %s", addr, r.URL.Path, error)
+	writeLog(r, error)
 }
