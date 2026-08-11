@@ -71,7 +71,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, "you are banned", http.StatusForbidden)
 		return
 	}
-	if poster.LastPost.Add(time.Second * time.Duration(Config.PostCooldown)).After(time.Now()) {
+	if time.Since(poster.LastPost) < time.Duration(Config.PostCooldown)*time.Second {
 		writeError(w, r, "you are posting too quickly", http.StatusTooManyRequests)
 		return
 	}
