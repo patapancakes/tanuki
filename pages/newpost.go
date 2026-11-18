@@ -146,7 +146,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirect := post.Parent
+	redirect := fmt.Sprintf("%s#post_%s", post.Parent, post.ID())
 	if post.IsThread() {
 		redirect = id
 	}
