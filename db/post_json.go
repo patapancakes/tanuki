@@ -191,7 +191,7 @@ func (p *PostJSON) delete(id string) error {
 		}
 
 		for _, reply := range thread.Replies {
-			if !reply.Image {
+			if !reply.HasImage() {
 				continue
 			}
 
@@ -209,7 +209,7 @@ func (p *PostJSON) delete(id string) error {
 	if post.ID() == "" {
 		return ErrUnknownPost
 	}
-	if post.Image {
+	if post.HasImage() {
 		err = post.DeleteImage()
 		if err != nil {
 			return fmt.Errorf("failed to delete post images: %w", err)

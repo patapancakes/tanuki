@@ -26,7 +26,7 @@ import (
 	"image"
 	"image/color"
 	"image/jpeg"
-	"image/png"
+	"io"
 	"os"
 	"path"
 	"strings"
@@ -42,7 +42,7 @@ type Post struct {
 	Name    string    `json:"name,omitempty"`
 	Subject string    `json:"subject,omitempty"`
 	Body    string    `json:"body,omitempty"`
-	Image   bool      `json:"image,omitempty"`
+	Image   string    `json:"image,omitempty"`
 	Poster  string    `json:"poster,omitempty"`
 	Posted  time.Time `json:"posted,omitzero"`
 	Replies []Post    `json:"replies,omitempty"`
@@ -72,7 +72,11 @@ func (p Post) ThumbPath() string {
 }
 
 func (p Post) FullPath() string {
-	return fmt.Sprintf("full/%s.png", p.ID())
+	return fmt.Sprintf("full/%s.%s", p.ID(), p.Image)
+}
+
+func (p Post) HasImage() bool {
+	return p.Image != ""
 }
 
 func (p Post) DeleteImage() error {
@@ -89,7 +93,14 @@ func (p Post) DeleteImage() error {
 	return nil
 }
 
-func (p Post) WriteImage(img image.Image) error {
+func (p Post) WriteImage(f io.ReadSeeker) error {
+	img, _, err := image.Decode(f)
+	if err != nil {
+		return err
+	}
+
+	f.Seek(0, io.SeekStart)
+
 	// full image
 	of, err := os.OpenFile(path.Join("data", p.FullPath()), os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -98,7 +109,7 @@ func (p Post) WriteImage(img image.Image) error {
 
 	defer of.Close()
 
-	err = png.Encode(of, img)
+	_, err = io.Copy(of, f)
 	if err != nil {
 		return err
 	}

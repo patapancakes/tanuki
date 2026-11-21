@@ -17,4 +17,4 @@ maxBumps: 50
 maxNameSize: 20
 maxSubjectSize: 32
 maxCommentSize: 300
-maxUploadSize: 4
+maxUploadSize: 8

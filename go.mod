@@ -1,10 +1,10 @@
 module github.com/patapancakes/tanuki
 
-go 1.25.1
+go 1.26.0
 
 require github.com/xeonx/timeago v1.0.0-rc5
 
-require golang.org/x/image v0.35.0
+require golang.org/x/image v0.48.0
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1

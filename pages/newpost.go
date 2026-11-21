@@ -21,6 +21,7 @@ package pages
 import (
 	"fmt"
 	"image"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -30,12 +31,14 @@ import (
 	. "github.com/patapancakes/tanuki/db"
 
 	_ "image/gif"
+	_ "image/png"
 
 	_ "golang.org/x/image/bmp"
+	_ "golang.org/x/image/webp"
 )
 
 func NewPost(w http.ResponseWriter, r *http.Request) {
-	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxUploadSize*102*1024))
+	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxUploadSize*1024*1024))
 
 	// admin
 	var admin bool
@@ -113,22 +116,28 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		post.Image = true
-
-		img, _, err := image.Decode(f)
+		cfg, format, err := image.DecodeConfig(f)
 		if err != nil {
 			writeError(w, r, fmt.Sprintf("failed to decode image file: %s", err), http.StatusBadRequest)
 			return
 		}
+		if cfg.Width > 16384 || cfg.Height > 16384 || cfg.Width*cfg.Height > 50*1000*1000 {
+			writeError(w, r, "image dimensions are too large", http.StatusBadRequest)
+			return
+		}
 
-		err = post.WriteImage(img)
+		post.Image = format
+
+		f.Seek(0, io.SeekStart)
+
+		err = post.WriteImage(f)
 		if err != nil {
 			writeError(w, r, fmt.Sprintf("failed to write image files: %s", err), http.StatusInternalServerError)
 			return
 		}
 	}
 
-	if post.Body == "" && !post.Image {
+	if post.Body == "" && !post.HasImage() {
 		writeError(w, r, "a comment or image is required", http.StatusBadRequest)
 		return
 	}
