@@ -19,7 +19,10 @@
 package config
 
 import (
+	"log"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"gopkg.in/yaml.v3"
 )
@@ -52,6 +55,25 @@ type ConfigFile struct {
 var Config ConfigFile
 
 func InitConfig(path string) error {
+	err := load(path)
+	if err != nil {
+		return err
+	}
+
+	// reload config on SIGHUP
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, syscall.SIGHUP)
+	go func() {
+		for range ch {
+			load(path)
+			log.Print("config reloaded")
+		}
+	}()
+
+	return nil
+}
+
+func load(path string) error {
 	f, err := os.Open(path)
 	if err != nil {
 		return err

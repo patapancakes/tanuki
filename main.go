@@ -37,10 +37,11 @@ func main() {
 	log.Printf("Tanuki BBS by Pancakes (pancakes@mooglepowered.com)\n")
 	log.Printf("https://github.com/patapancakes/tanuki\n")
 
-	configpath := flag.String("config", "config.yml", "path to config file")
+	// config
+	configPath := flag.String("config", "config.yml", "path to config file")
 	flag.Parse()
 
-	err := InitConfig(*configpath)
+	err := InitConfig(*configPath)
 	if err != nil {
 		log.Fatalf("failed to parse config file: %s", err)
 	}
