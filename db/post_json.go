@@ -19,7 +19,7 @@
 package db
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"os"
 	"slices"
@@ -33,11 +33,17 @@ type PostJSON struct {
 	mtx  sync.RWMutex
 }
 
+var postJsonCache *PostData
+
 func NewPostJSON(file string) *PostJSON {
 	return &PostJSON{file: file}
 }
 
 func (p *PostJSON) read() (PostData, error) {
+	if postJsonCache != nil {
+		return *postJsonCache, nil
+	}
+
 	f, err := os.Open(p.file)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -50,7 +56,7 @@ func (p *PostJSON) read() (PostData, error) {
 	defer f.Close()
 
 	var posts PostData
-	err = json.NewDecoder(f).Decode(&posts)
+	err = json.UnmarshalRead(f, &posts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode log file: %w", err)
 	}
@@ -59,6 +65,8 @@ func (p *PostJSON) read() (PostData, error) {
 }
 
 func (p *PostJSON) write(posts PostData) error {
+	postJsonCache = &posts
+
 	f, err := os.OpenFile(p.file, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open log file: %w", err)
@@ -66,7 +74,7 @@ func (p *PostJSON) write(posts PostData) error {
 
 	defer f.Close()
 
-	err = json.NewEncoder(f).Encode(posts)
+	err = json.MarshalWrite(f, posts)
 	if err != nil {
 		return fmt.Errorf("failed to encode log file: %w", err)
 	}

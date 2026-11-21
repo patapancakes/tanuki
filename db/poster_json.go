@@ -19,7 +19,7 @@
 package db
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"os"
 	"sync"
@@ -30,11 +30,17 @@ type PosterJSON struct {
 	mtx  sync.RWMutex
 }
 
+var posterJsonCache *PosterData
+
 func NewPosterJSON(file string) *PosterJSON {
 	return &PosterJSON{file: file}
 }
 
 func (p *PosterJSON) read() (PosterData, error) {
+	if posterJsonCache != nil {
+		return *posterJsonCache, nil
+	}
+
 	f, err := os.Open(p.file)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -47,7 +53,7 @@ func (p *PosterJSON) read() (PosterData, error) {
 	defer f.Close()
 
 	posters := make(PosterData)
-	err = json.NewDecoder(f).Decode(&posters)
+	err = json.UnmarshalRead(f, &posters)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode posters file: %w", err)
 	}
@@ -56,6 +62,8 @@ func (p *PosterJSON) read() (PosterData, error) {
 }
 
 func (p *PosterJSON) write(posters PosterData) error {
+	posterJsonCache = &posters
+
 	f, err := os.OpenFile(p.file, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open posters file: %w", err)
@@ -63,7 +71,7 @@ func (p *PosterJSON) write(posters PosterData) error {
 
 	defer f.Close()
 
-	err = json.NewEncoder(f).Encode(posters)
+	err = json.MarshalWrite(f, posters)
 	if err != nil {
 		return fmt.Errorf("failed to encode posters file: %w", err)
 	}
