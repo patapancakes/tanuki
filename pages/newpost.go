@@ -38,7 +38,7 @@ import (
 )
 
 func NewPost(w http.ResponseWriter, r *http.Request) {
-	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxUploadSize*1024*1024))
+	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxImageSize*1024*1024))
 
 	// admin
 	var admin bool
@@ -88,19 +88,19 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	post.Name = strings.TrimSpace(r.PostFormValue("name"))
-	if !utf8.ValidString(post.Name) || utf8.RuneCountInString(post.Name) > Config.MaxNameSize {
+	if !utf8.ValidString(post.Name) || utf8.RuneCountInString(post.Name) > Config.MaxNameLength {
 		writeError(w, r, "invalid name", http.StatusBadRequest)
 		return
 	}
 
 	post.Subject = strings.TrimSpace(r.PostFormValue("subject"))
-	if !utf8.ValidString(post.Subject) || utf8.RuneCountInString(post.Subject) > Config.MaxSubjectSize {
+	if !utf8.ValidString(post.Subject) || utf8.RuneCountInString(post.Subject) > Config.MaxSubjectLength {
 		writeError(w, r, "invalid subject", http.StatusBadRequest)
 		return
 	}
 
 	post.Body = strings.TrimSpace(r.PostFormValue("comment"))
-	if !utf8.ValidString(post.Body) || utf8.RuneCountInString(post.Body) > Config.MaxCommentSize {
+	if !utf8.ValidString(post.Body) || utf8.RuneCountInString(post.Body) > Config.MaxCommentLength {
 		writeError(w, r, "invalid comment", http.StatusBadRequest)
 		return
 	}
@@ -121,7 +121,7 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 			writeError(w, r, fmt.Sprintf("failed to decode image file: %s", err), http.StatusBadRequest)
 			return
 		}
-		if cfg.Width > 16384 || cfg.Height > 16384 || cfg.Width*cfg.Height > 50*1000*1000 {
+		if cfg.Width*cfg.Height > Config.MaxImagePixels*1000*1000 {
 			writeError(w, r, "image dimensions are too large", http.StatusBadRequest)
 			return
 		}
