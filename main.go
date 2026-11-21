@@ -55,10 +55,10 @@ func main() {
 	os.MkdirAll("data/thumb", 0755)
 	os.MkdirAll("data/full", 0755)
 
-	// session keys
+	// session key
 	err = checkKey()
 	if err != nil {
-		log.Fatalf("failed to create session keys: %s", err)
+		log.Fatalf("failed to create session key: %s", err)
 	}
 
 	// files
