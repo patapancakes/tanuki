@@ -105,6 +105,8 @@ func checkKey() error {
 		return err
 	}
 
+	defer f.Close()
+
 	_, err = io.Copy(f, io.LimitReader(rand.Reader, 32))
 	if err != nil {
 		return err
