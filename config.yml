@@ -18,5 +18,5 @@ maxNameLength: 20
 maxSubjectLength: 32
 maxCommentLength: 300
 
-maxImageSize: 5 # in megabytes
+maxImageSize: 8 # in megabytes
 maxImagePixels: 40 # in megapixels
