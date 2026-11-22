@@ -29,6 +29,7 @@ import (
 
 	. "github.com/patapancakes/tanuki/config"
 	. "github.com/patapancakes/tanuki/db"
+	"github.com/patapancakes/tanuki/ratelimit"
 
 	_ "image/gif"
 	_ "image/png"
@@ -36,6 +37,8 @@ import (
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/webp"
 )
+
+var postMtx = ratelimit.NewMutex()
 
 func NewPost(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, int64(Config.MaxImageSize*1024*1024))
@@ -64,6 +67,9 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, fmt.Sprintf("failed to derive identity: %s", err), http.StatusInternalServerError)
 		return
 	}
+
+	postMtx.Lock(identity)
+	defer postMtx.Unlock(identity)
 
 	poster, err := posters.Get(identity)
 	if err != nil && err != ErrUnknownPoster {

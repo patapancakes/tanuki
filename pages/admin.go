@@ -28,9 +28,13 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	. "github.com/patapancakes/tanuki/config"
 	. "github.com/patapancakes/tanuki/db"
+	"github.com/patapancakes/tanuki/ratelimit"
 )
 
-var loginT *template.Template
+var (
+	loginT   *template.Template
+	loginMtx = ratelimit.NewMutex()
+)
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	if Config.AdminPassword == "" {
@@ -57,6 +61,9 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, fmt.Sprintf("failed to derive identity: %s", err), http.StatusInternalServerError)
 		return
 	}
+
+	loginMtx.Lock(identity)
+	defer loginMtx.Unlock(identity)
 
 	poster, err := posters.Get(identity)
 	if err != nil && err != ErrUnknownPoster {
