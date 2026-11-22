@@ -19,10 +19,8 @@
 package main
 
 import (
-	"crypto/rand"
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -56,12 +54,6 @@ func main() {
 	os.MkdirAll("data/thumb", 0755)
 	os.MkdirAll("data/full", 0755)
 
-	// session key
-	err = checkKey()
-	if err != nil {
-		log.Fatalf("failed to create session key: %s", err)
-	}
-
 	// files
 	http.Handle("GET /assets/", cache(http.StripPrefix("/assets/", http.FileServerFS(pages.AssetsFS))))
 	http.Handle("GET /thumb/", cache(http.StripPrefix("/thumb/", http.FileServer(http.Dir("data/thumb")))))
@@ -92,27 +84,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func checkKey() error {
-	_, err := os.Stat("data/session.key")
-	if err == nil {
-		return nil
-	}
-
-	f, err := os.OpenFile("data/session.key", os.O_CREATE|os.O_WRONLY, 0600)
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-
-	_, err = io.Copy(f, io.LimitReader(rand.Reader, 32))
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func cache(h http.Handler) http.HandlerFunc {

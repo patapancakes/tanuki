@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -93,17 +92,11 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	key, err := os.ReadFile("data/session.key")
-	if err != nil {
-		writeError(w, r, fmt.Sprintf("failed to read session signing key: %s", err), http.StatusInternalServerError)
-		return
-	}
-
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		Subject:   identity,
-	}).SignedString(key)
+	}).SignedString(sessionKey)
 	if err != nil {
 		writeError(w, r, fmt.Sprintf("failed to sign token: %s", err), http.StatusInternalServerError)
 		return

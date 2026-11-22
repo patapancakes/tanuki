@@ -19,12 +19,15 @@
 package pages
 
 import (
+	"bytes"
+	crand "crypto/rand"
 	"embed"
 	"errors"
 	"html/template"
+	"io"
 	"io/fs"
 	"log"
-	"math/rand/v2"
+	mrand "math/rand/v2"
 	"net/http"
 	"net/netip"
 	"os"
@@ -43,7 +46,7 @@ var (
 		"sub":     func(a, b int) int { return a - b },
 		"max":     func(a, b int) int { return max(a, b) },
 		"config":  func() ConfigFile { return Config },
-		"rand":    rand.IntN,
+		"rand":    mrand.IntN,
 	}
 
 	posts   db.PostDB
@@ -56,6 +59,8 @@ var (
 	//go:embed assets
 	assets      embed.FS
 	AssetsFS, _ = fs.Sub(assets, "assets")
+
+	sessionKey []byte
 
 	errInvalidSession        = errors.New("invalid session")
 	errInvalidSessionSubject = errors.New("invalid session subject")
@@ -134,6 +139,12 @@ func Init() error {
 	posts = db.NewPostJSON("data/posts.json")
 	posters = db.NewPosterJSON("data/posters.json")
 
+	// session key
+	sessionKey, err = getSessionKey()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -158,15 +169,35 @@ func deriveIdentity(r *http.Request) (string, error) {
 	return ip.String(), nil
 }
 
+func getSessionKey() ([]byte, error) {
+	b, err := os.ReadFile("data/session.key")
+	if err == nil {
+		return b, nil
+	}
+
+	f, err := os.OpenFile("data/session.key", os.O_CREATE|os.O_WRONLY, 0600)
+	if err != nil {
+		return nil, err
+	}
+
+	defer f.Close()
+
+	var buf bytes.Buffer
+	_, err = io.Copy(io.MultiWriter(f, &buf), io.LimitReader(crand.Reader, 32))
+	if err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
+}
+
 func checkAuth(r *http.Request) error {
 	session, err := r.Cookie("session")
 	if err != nil {
 		return err
 	}
 
-	token, err := jwt.Parse(session.Value, func(token *jwt.Token) (any, error) {
-		return os.ReadFile("data/session.key")
-	})
+	token, err := jwt.Parse(session.Value, func(token *jwt.Token) (any, error) { return sessionKey, nil })
 	if err != nil {
 		return err
 	}
