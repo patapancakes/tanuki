@@ -22,6 +22,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -131,7 +133,7 @@ func AdminLogout(w http.ResponseWriter, r *http.Request) {
 	})
 
 	redirect := r.Referer()
-	if redirect == "" {
+	if redirect == "" || slices.Contains(strings.Split(redirect, "/"), "admin") {
 		redirect = "/"
 	}
 
